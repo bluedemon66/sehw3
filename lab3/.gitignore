@@ -1,0 +1,15 @@
+/target/
+/.cache/
+/.idea/
+/.vscode/
+*.iml
+*.class
+*.log
+*.tmp
+*.zip
+*.7z
+*.rar
+*.tar.gz
+.DS_Store
+Thumbs.db
+~$*

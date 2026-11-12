@@ -1,0 +1,74 @@
+{
+  "verified_at": "2026-11-09T19:25:01+08:00",
+  "stage": "framework",
+  "jdk": "23.0.1",
+  "java_release": 17,
+  "maven": "3.9.11",
+  "production_java_files": 155,
+  "test_java_files": 6,
+  "production_physical_lines": 6261,
+  "tests": 40,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "formatter": "google-java-format 1.27.0 / fmt-maven-plugin 2.29",
+  "format_check": "passed",
+  "checkstyle_violations": 0,
+  "demo": "Core -> parse passed",
+  "source_tree_sha256": "e32f21e368925b4d477950d10751a057e8e1a5af1ddfa5a2c45c016114c3629b",
+  "jar_sha256": "da84df285936c50cca833317fac5bf2270de3c4e6d0967c2f1898ced765befb1",
+  "suites": [
+    {
+      "suite": "edu.nju.sehw.takeout.architecture.ArchitectureTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "edu.nju.sehw.takeout.client.core.CoreRoutingTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "edu.nju.sehw.takeout.model.MessageSnapshotTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "edu.nju.sehw.takeout.model.ProtocolContractsTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "edu.nju.sehw.takeout.server.task.TaskPoolTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "javadoc": {
+    "language": "English",
+    "result": "passed",
+    "command": "tools/javadoc.ps1",
+    "doclint": "all,-missing; warnings treated as errors",
+    "explicit_declaration_coverage": {
+      "types": 156,
+      "methods": 317,
+      "fields": 167,
+      "parameters": 548,
+      "returns": 137
+    },
+    "english_source_comments": 642,
+    "html_pages_checked": 3
+  },
+  "non_comment_ast_unchanged": true,
+  "compared_java_files": 161
+}

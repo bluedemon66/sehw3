@@ -1,0 +1,78 @@
+name: sehw3 CI
+
+on:
+  push:
+    paths:
+      - 'lab3/**'
+      - '.github/workflows/sehw3-ci.yml'
+  pull_request:
+    paths:
+      - 'lab3/**'
+      - '.github/workflows/sehw3-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Java verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: lab3
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Set up the verified JDK
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '23.0.1'
+          cache: maven
+          cache-dependency-path: lab3/pom.xml
+
+      - name: Compile, test, and check style
+        run: sh ./mvnw --batch-mode --no-transfer-progress clean verify
+
+      - name: Run the Core communication demonstration
+        run: java -jar target/takeout-system-0.1.0-SNAPSHOT.jar
+
+      - name: Validate English API documentation
+        shell: pwsh
+        run: ./tools/javadoc.ps1
+
+      - name: Save test and style reports
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sehw3-reports-${{ github.sha }}
+          path: |
+            lab3/target/surefire-reports/
+            lab3/target/checkstyle-result.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Save the verified JAR
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sehw3-jar-${{ github.sha }}
+          path: lab3/target/takeout-system-0.1.0-SNAPSHOT.jar
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Save API documentation
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sehw3-apidocs-${{ github.sha }}
+          path: lab3/target/apidocs/
+          if-no-files-found: error
+          retention-days: 14
