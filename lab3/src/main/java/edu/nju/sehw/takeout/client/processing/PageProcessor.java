@@ -1,141 +1,228 @@
 package edu.nju.sehw.takeout.client.processing;
 
+import edu.nju.sehw.takeout.client.core.ClientParticipants;
 import edu.nju.sehw.takeout.client.core.Core;
 import edu.nju.sehw.takeout.client.core.MessageParticipant;
+import edu.nju.sehw.takeout.model.comment.CommentPagePayload;
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.message.EmptyPayload;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
 import edu.nju.sehw.takeout.model.message.Message;
+import edu.nju.sehw.takeout.model.message.MessagePayload;
+import edu.nju.sehw.takeout.model.message.OperationCode;
+import edu.nju.sehw.takeout.model.message.OperationReplyPayload;
+import edu.nju.sehw.takeout.model.resource.ResourceBundle;
+import edu.nju.sehw.takeout.model.resource.ResourceBundlePayload;
+import edu.nju.sehw.takeout.model.resource.ResourceDescriptor;
+import edu.nju.sehw.takeout.model.resource.ResourceKind;
+import edu.nju.sehw.takeout.model.ui.PageActionPayload;
+import edu.nju.sehw.takeout.model.ui.PageManifestPayload;
+import edu.nju.sehw.takeout.model.ui.PageRequestPayload;
+import edu.nju.sehw.takeout.model.ui.PageResourceManifest;
+import edu.nju.sehw.takeout.model.ui.TextValue;
 import edu.nju.sehw.takeout.model.ui.UiPage;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.ui.UiResourceNode;
+import edu.nju.sehw.takeout.model.ui.UiValue;
+import edu.nju.sehw.takeout.model.ui.UiValuesPayload;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Assembles page manifests, resources, and values before returning a completed page to its UI. */
+/** Collects the display data and resources for each page before returning it to the UI. */
 public final class PageProcessor extends MessageParticipant {
+  private final Map<UUID, Stage> pending = new ConcurrentHashMap<>();
 
-  /** Request-specific page assemblies awaiting manifests, resource references, or field values. */
-  private final Map<UUID, UiPageAssembly> pendingPages = new ConcurrentHashMap<>();
-
-  /**
-   * Creates this participant with the dependencies documented below.
-   *
-   * @param participantId positive identifier assigned to this participant in its local Core
-   * @param core local Core that owns this participant and routes its messages
-   */
+  /** Creates a page processor registered through the supplied Core. */
   public PageProcessor(int participantId, Core core) {
     super(participantId, core);
   }
 
-  /**
-   * Updates a request-specific page assembly from a page request or returned resource data.
-   *
-   * @param message message envelope containing request identity, routing fields, operation code,
-   *     and arguments
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
   @Override
   public void parse(Message message) {
-    throw new NotImplementedYetException("PageProcessor.parse");
+    if (message.senderId() == ClientParticipants.EVENTS) {
+      var payload = message.payload();
+      if (payload instanceof PageRequestPayload request) {
+        begin(message, new PageActionPayload(request.pageId(), 0, new EmptyPayload()));
+      } else if (payload instanceof PageActionPayload action) {
+        begin(message, action);
+      } else {
+        fail(message, new ErrorPayload("INVALID_REQUEST", "Expected page action"));
+      }
+      return;
+    }
+    Stage stage = pending.remove(message.requestId());
+    if (stage == null) {
+      return;
+    }
+    var progress = stage.progress();
+    if (message.senderId() != stage.sender()
+        || !message.correlationId().equals(progress.request.correlationId())) {
+      fail(
+          progress.request,
+          new ErrorPayload("INVALID_REPLY", "Page reply does not match its request"));
+      return;
+    }
+    try {
+      advance(progress, message.payload());
+    } catch (IllegalArgumentException | IllegalStateException ex) {
+      fail(progress.request, new ErrorPayload("PAGE_FAILED", ex.getMessage()));
+    }
   }
 
-  /**
-   * Starts assembly of the selected page using the matching request context.
-   *
-   * @param pageId identifier of the page in the client's local page catalogue
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handlePage(int pageId, UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handlePage");
+  private void begin(Message request, PageActionPayload action) {
+    var progress = new Progress(request, action);
+    send(
+        progress,
+        ClientParticipants.CATALOG,
+        OperationCode.OPEN_PAGE.code(),
+        new PageRequestPayload(action.pageId()));
   }
 
-  /**
-   * Combines the request's manifest, resource bindings, and typed values into a page tree.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @return the assembled page associated with the root UI operation
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private UiPage assemblePage(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.assemblePage");
+  private void advance(Progress progress, MessagePayload payload) {
+    if (payload instanceof ErrorPayload) {
+      fail(progress.request, payload);
+    } else if (payload instanceof PageManifestPayload manifest) {
+      progress.manifest = manifest.manifest();
+      int operation = progress.action.operationCode();
+      if (operation == 0) {
+        acquire(progress);
+      } else {
+        int target =
+            operation == OperationCode.COMMENT_LIST.code()
+                ? ClientParticipants.COMMENTS
+                : ClientParticipants.CRUD;
+        send(progress, target, operation, progress.action.arguments());
+      }
+    } else if (payload instanceof OperationReplyPayload result) {
+      if (result.status() != ResultStatus.SUCCESS) {
+        fail(progress.request, result);
+        return;
+      }
+      populate(progress, result.payload());
+      acquire(progress);
+    } else if (payload instanceof ResourceBundlePayload bundle) {
+      core()
+          .getTargetRef(this, ClientParticipants.UI)
+          .receivePage(assemblePage(progress, bundle.resources()));
+    } else {
+      fail(progress.request, new ErrorPayload("INVALID_REPLY", "Unexpected page result"));
+    }
   }
 
-  /**
-   * Obtains the authorized UiDataPort and returns the request's assembled page.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void returnToUi(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.returnToUi");
+  private void populate(Progress progress, MessagePayload payload) {
+    if (payload instanceof UiValuesPayload fields) {
+      progress.values.putAll(fields.values());
+      return;
+    }
+    if (!(payload instanceof CommentPagePayload comments)) {
+      throw new IllegalArgumentException("Expected page data");
+    }
+    var entries = new ArrayList<>(progress.manifest.entries());
+    int element =
+        Math.max(100, 1 + entries.stream().mapToInt(ResourceDescriptor::elementId).max().orElse(0));
+    if (comments.page().items().isEmpty()) {
+      progress.values.put(element, new TextValue("No comments"));
+    }
+    for (var comment : comments.page().items()) {
+      progress.values.put(
+          element++,
+          new TextValue(
+              comment.commentId()
+                  + " | "
+                  + comment.authorLabel()
+                  + " ["
+                  + comment.purchaseMark()
+                  + "] "
+                  + comment.text()));
+      for (var image : comment.images()) {
+        entries.add(
+            new ResourceDescriptor(
+                element++, Optional.empty(), Optional.of(image.resourceId()), ResourceKind.IMAGE));
+      }
+      for (var reply : comment.replies()) {
+        progress.values.put(element++, new TextValue(reply.merchantLabel() + " " + reply.text()));
+      }
+    }
+    comments
+        .page()
+        .nextCursor()
+        .ifPresent(cursor -> progress.values.put(19, new TextValue(cursor)));
+    progress.manifest = new PageResourceManifest(entries);
   }
 
-  /**
-   * Requests the resources and values needed to assemble the home page.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handleHomePage(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handleHomePage");
+  private void acquire(Progress progress) {
+    send(
+        progress,
+        ClientParticipants.RESOURCES,
+        OperationCode.OPEN_PAGE.code(),
+        new PageManifestPayload(progress.manifest));
   }
 
-  /**
-   * Requests the selected order's details and the resources needed to display them.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handleOrderDetailPage(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handleOrderDetailPage");
+  private void send(Progress progress, int target, int operation, MessagePayload payload) {
+    UUID child = UUID.randomUUID();
+    pending.put(child, new Stage(progress, target));
+    var sent =
+        dispatch(
+            prepareMessage(child, progress.request.correlationId(), target, operation, payload));
+    if (!sent.accepted() && pending.remove(child) != null) {
+      fail(progress.request, new ErrorPayload(sent.errorCode().name(), sent.description()));
+    }
   }
 
-  /**
-   * Requests the merchant's turnover values and their page layout.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handleMerchantTurnoverPage(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handleMerchantTurnoverPage");
+  private void fail(Message request, MessagePayload error) {
+    dispatch(
+        prepareMessage(
+            request.requestId(),
+            request.correlationId(),
+            ClientParticipants.UI,
+            request.operationCode(),
+            error));
   }
 
-  /**
-   * Requests a visible comment page and its image resources.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handleCommentListPage(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handleCommentListPage");
+  private UiPage assemblePage(Progress progress, ResourceBundle resources) {
+    int layout = progress.manifest.uiLayout().elementId();
+    if (!resources.localResources().containsKey(layout)) {
+      throw new IllegalStateException("Page layout is missing");
+    }
+    var elements = new LinkedHashSet<Integer>();
+    progress.manifest.entries().forEach(entry -> elements.add(entry.elementId()));
+    progress.values.keySet().stream().sorted().forEach(elements::add);
+    elements.remove(layout);
+    var children =
+        elements.stream()
+            .map(
+                element ->
+                    new UiResourceNode(
+                        element,
+                        Optional.ofNullable(resources.localResources().get(element)),
+                        Optional.ofNullable(progress.values.get(element)),
+                        List.of()))
+            .toList();
+    var root =
+        new UiResourceNode(
+            layout,
+            Optional.of(resources.localResources().get(layout)),
+            Optional.ofNullable(progress.values.get(layout)),
+            children);
+    return new UiPage(progress.action.pageId(), progress.request.correlationId(), root);
   }
 
-  /**
-   * Requests the comment list again with the selected ordering strategy.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handleCommentSort(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handleCommentSort");
-  }
+  private record Stage(Progress progress, int sender) {}
 
-  /**
-   * Requests the next comment page using the retained continuation cursor.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handleCommentNextPage(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handleCommentNextPage");
-  }
+  private static final class Progress {
+    private final Message request;
+    private final PageActionPayload action;
+    private final Map<Integer, UiValue> values = new HashMap<>();
+    private PageResourceManifest manifest;
 
-  /**
-   * Requests the rider's current task data and its page resources.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private void handleRiderTaskPage(UUID requestId) {
-    throw new NotImplementedYetException("PageProcessor.handleRiderTaskPage");
+    private Progress(Message request, PageActionPayload action) {
+      this.request = request;
+      this.action = action;
+    }
   }
 }
