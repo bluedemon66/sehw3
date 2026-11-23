@@ -2,10 +2,12 @@ package edu.nju.sehw.takeout.client.query;
 
 import edu.nju.sehw.takeout.client.core.Core;
 import edu.nju.sehw.takeout.client.core.MessageParticipant;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
 import edu.nju.sehw.takeout.model.message.Message;
+import edu.nju.sehw.takeout.model.message.OperationReplyPayload;
 import edu.nju.sehw.takeout.model.network.SecureResponse;
 import edu.nju.sehw.takeout.model.resource.LocalResourceRef;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.resource.UploadResourcePayload;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,7 +24,7 @@ public final class ResourceUploadTool extends MessageParticipant {
   private final HttpsTransport transport;
 
   /** Remote request identifiers mapped to the original participant and root UI return route. */
-  private final Map<UUID, ReplyRoute> pending = new ConcurrentHashMap<>();
+  private final Map<UUID, Message> pending = new ConcurrentHashMap<>();
 
   /**
    * Creates this participant with the dependencies documented below.
@@ -46,30 +48,51 @@ public final class ResourceUploadTool extends MessageParticipant {
    *
    * @param message message envelope containing request identity, routing fields, operation code,
    *     and arguments
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public void parse(Message message) {
-    throw new NotImplementedYetException("ResourceUploadTool.parse");
+    if (!(message.payload() instanceof UploadResourcePayload input)) {
+      reply(message, new ErrorPayload("INVALID_REQUEST", "Expected a local attachment"));
+      return;
+    }
+    if (pending.putIfAbsent(message.requestId(), message) == null) {
+      upload(message.requestId(), input.file());
+    }
   }
 
   /**
    * Uploads the bytes resolved from the selected local resource reference.
    *
+   * @param requestId identifier of the pending upload
    * @param file local resource reference identifying the bytes selected for upload
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
-  private void upload(LocalResourceRef file) {
-    throw new NotImplementedYetException("ResourceUploadTool.upload");
+  private void upload(UUID requestId, LocalResourceRef file) {
+    Message message = pending.get(requestId);
+    try {
+      transport
+          .upload(security.prepare(message), file)
+          .whenComplete((response, failure) -> onUploaded(requestId, response, failure));
+    } catch (RuntimeException ex) {
+      onUploaded(requestId, null, ex);
+    }
   }
 
   /**
    * Forwards the upload result to the owning client workflow using its reply route.
    *
-   * @param reply remote request identifier, result status, and typed result payload
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
+   * @param requestId identifier of the pending upload
+   * @param response remote response when transport succeeds
+   * @param failure cause of a transport failure, when present
    */
-  private void onUploaded(SecureResponse reply) {
-    throw new NotImplementedYetException("ResourceUploadTool.onUploaded");
+  private void onUploaded(UUID requestId, SecureResponse response, Throwable failure) {
+    Message message = pending.remove(requestId);
+    if (message == null) {
+      return;
+    }
+    if (failure != null || response == null || !response.requestId().equals(requestId)) {
+      reply(message, new ErrorPayload("UPLOAD_FAILED", "Could not upload attachment"));
+      return;
+    }
+    reply(message, new OperationReplyPayload(response.status(), response.payload()));
   }
 }
