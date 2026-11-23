@@ -32,4 +32,4 @@ Java文件位置为`src/main/java/edu/nju/sehw/takeout/`加包路径，例如`cl
 
 ## P.S. 对照与后续实现
 
-实验二源图保存在相邻项目`../sehw2/design/drafts`，本轮修改记录见[设计调整](design-changes.md)。文件内的存根表示待实现入口；具体页面目录、数据库结构、HTTP编码和参数配置随业务实现落地。
+实验二源图保存在相邻项目`../sehw2/design/drafts`，本轮修改记录见[设计调整](design-changes.md)。启动组装位于 `app`，页面目录、数据库结构和 HTTPS 编码分别由资源清单、`schema.sql` 和 `EnvelopeCodec` 提供。

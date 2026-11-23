@@ -1,6 +1,6 @@
 {
     "schema_version":  1,
-    "generated_at":  "2026-11-12T15:36:24+08:00",
+    "generated_at":  "2026-11-23T14:58:10+08:00",
     "source":  "sehw3",
     "repository":  "bluedemon66/sehw1",
     "files":  [
@@ -33,11 +33,18 @@
                       "transform":  "byte-copy"
                   },
                   {
+                      "source":  "doc/api-learning-guide.md",
+                      "target":  "lab3/doc/api-learning-guide.md",
+                      "source_sha256":  "839932a3ec8129226ec1a2e749515868d57b9b6c5d917d6f3ded8f0d3964cc7b",
+                      "exported_sha256":  "a32d1dd1f8611b8fe6a53f8f095dad7dc3199825f34912a6633281df903f2149",
+                      "transform":  "utf8-lf"
+                  },
+                  {
                       "source":  "doc/architecture.md",
                       "target":  "lab3/doc/architecture.md",
-                      "source_sha256":  "91f87dab38b64c39af3f49268d880935533fb4923e82fa8c0662d1d45dd8345a",
-                      "exported_sha256":  "91f87dab38b64c39af3f49268d880935533fb4923e82fa8c0662d1d45dd8345a",
-                      "transform":  "byte-copy"
+                      "source_sha256":  "d9216f056b404ae45fd4bb39214c87f4dc17135723540a730229060cabf2aa54",
+                      "exported_sha256":  "8472f10287c20902059ee951f0b399513037806c68e9c6d09bc455eda6a6dfaa",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "doc/ci.md",
@@ -49,23 +56,65 @@
                   {
                       "source":  "doc/design-changes.md",
                       "target":  "lab3/doc/design-changes.md",
-                      "source_sha256":  "fc6f8fa16a1dc52c1537fa906db3b1d5ed83de1f452b18ab23451af1f535d15a",
-                      "exported_sha256":  "fc6f8fa16a1dc52c1537fa906db3b1d5ed83de1f452b18ab23451af1f535d15a",
+                      "source_sha256":  "7fd0f70719ca504e35f75ed402f2f1fa52a955088d5bee9c19f229abf2d77913",
+                      "exported_sha256":  "c9406ea697881b7004f44a0f02ec7ceefa26ac032dc42cae9116e8df265656e3",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "doc/examples/file-layer/FileLayerWalkthrough.java",
+                      "target":  "lab3/doc/examples/file-layer/FileLayerWalkthrough.java",
+                      "source_sha256":  "806d119611465aefd74046a1fc03dea6009c98d6ccbe8088e3125928f00bfbfd",
+                      "exported_sha256":  "806d119611465aefd74046a1fc03dea6009c98d6ccbe8088e3125928f00bfbfd",
                       "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "doc/examples/file-layer/README.md",
+                      "target":  "lab3/doc/examples/file-layer/README.md",
+                      "source_sha256":  "d786cb4246a73cf353aa7be1053219691ba14376266a7e2beaf9a238ca11a50c",
+                      "exported_sha256":  "b2a3ede78ca7eadcc2927a4c0ffa91419f4eb34674a078a1e69c0f404c4d3fe7",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "doc/examples/file-layer/res/2/7",
+                      "target":  "lab3/doc/examples/file-layer/res/2/7",
+                      "source_sha256":  "02aaee51207232d696c90545684cf27fbffa6203591f5da21d9c2d74e0db769e",
+                      "exported_sha256":  "02aaee51207232d696c90545684cf27fbffa6203591f5da21d9c2d74e0db769e",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "doc/examples/file-layer/res/3/2",
+                      "target":  "lab3/doc/examples/file-layer/res/3/2",
+                      "source_sha256":  "45a36ba0d73aacfaba4be0138b8505de41148e0ec2515b15c38e46481f2f1d78",
+                      "exported_sha256":  "45a36ba0d73aacfaba4be0138b8505de41148e0ec2515b15c38e46481f2f1d78",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "doc/examples/file-layer/res/pages/1001.properties",
+                      "target":  "lab3/doc/examples/file-layer/res/pages/1001.properties",
+                      "source_sha256":  "1d91b111205fa33d5acdc7976b2412996e28c9e9b93ecc0582ee8ce764025c56",
+                      "exported_sha256":  "1d91b111205fa33d5acdc7976b2412996e28c9e9b93ecc0582ee8ce764025c56",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "doc/file-layer-api.md",
+                      "target":  "lab3/doc/file-layer-api.md",
+                      "source_sha256":  "26afe542a70624a443b21c278d3c48def71b339a2edcee8f463fc3b4084f567e",
+                      "exported_sha256":  "e667b446289b6b86ed6b17f0dbe4e2e13e7889b7c35a5d299958571da7a225de",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "doc/implementation-guide.md",
                       "target":  "lab3/doc/implementation-guide.md",
-                      "source_sha256":  "9117bbf0ea97053b073e350740b02316aca346d100e3a33365033d01c25697cc",
-                      "exported_sha256":  "9117bbf0ea97053b073e350740b02316aca346d100e3a33365033d01c25697cc",
-                      "transform":  "byte-copy"
+                      "source_sha256":  "332c91863dfd9ab8f7161ef367ce7ce8b9ca81f0aba4ec04b7c5cff027429b2c",
+                      "exported_sha256":  "1ab8adc0b3e3434af975852bfb252b8474b091d53098ba091c08cc22570ca30b",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "doc/interface-contracts.md",
                       "target":  "lab3/doc/interface-contracts.md",
-                      "source_sha256":  "9b2f95466cfcb744c7af2f9d79fc4b10046f5542869c642196bf1a841043d0a8",
-                      "exported_sha256":  "9b2f95466cfcb744c7af2f9d79fc4b10046f5542869c642196bf1a841043d0a8",
-                      "transform":  "byte-copy"
+                      "source_sha256":  "abb8dc76faf089e834ca6eb8c68e62611b31b1d35ce753db76e79c20ed72d079",
+                      "exported_sha256":  "f866128149eb467672e053cf46fbfd7db8beaddfe5d2db0a21c338cf0739c10e",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "doc/sources.md",
@@ -77,9 +126,9 @@
                   {
                       "source":  "doc/testing.md",
                       "target":  "lab3/doc/testing.md",
-                      "source_sha256":  "82192419a2d1d1d8a414bf8b2cc7411458e5bb64a2ac414796239015264dde71",
-                      "exported_sha256":  "82192419a2d1d1d8a414bf8b2cc7411458e5bb64a2ac414796239015264dde71",
-                      "transform":  "byte-copy"
+                      "source_sha256":  "6d483b0d99b38c0b57c56783d9f37d9a1b96bddd967ef38a49965d0c51c20546",
+                      "exported_sha256":  "27831ea1d407b5a8d5da55de7dd4ed4e9491e00175a8e8d26e4e7f75220ea96c",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "doc/verification.json",
@@ -112,16 +161,37 @@
                   {
                       "source":  "pom.xml",
                       "target":  "lab3/pom.xml",
-                      "source_sha256":  "65ab2d5e8c78ca41cc4ea0cd6c04f4c3e12bf0567e2c6d94c0beea416ad29ae2",
-                      "exported_sha256":  "65ab2d5e8c78ca41cc4ea0cd6c04f4c3e12bf0567e2c6d94c0beea416ad29ae2",
-                      "transform":  "byte-copy"
+                      "source_sha256":  "5aa768a41963110d933a0f5b92a4397f68969435702204f4dbd9e892f0d3f9e9",
+                      "exported_sha256":  "262a975d89b4a2bb01e39875dc326c9f2e18d5f6bf533772e46202e996ee6e12",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "README.md",
                       "target":  "lab3/README.md",
-                      "source_sha256":  "4e60af5c7284a7b771a0a43769e69b38bc5eef2e4f04660cf856de55df310b8c",
-                      "exported_sha256":  "4e60af5c7284a7b771a0a43769e69b38bc5eef2e4f04660cf856de55df310b8c",
-                      "transform":  "byte-copy"
+                      "source_sha256":  "f1bf69b7de3e0308bc16d344750706e90d40afc366a954943fb9632a8bfb4d5f",
+                      "exported_sha256":  "20ccb5536a03ced7969b8da38ec5c5614100abbc48d7094ebdc537e1fb357101",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/app/ClientApplication.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/app/ClientApplication.java",
+                      "source_sha256":  "7ea0a79aa07e2efe4bb636b817f37e9a770a20c43ed97bcb30c73803481e76ea",
+                      "exported_sha256":  "a367ebc55855e48036a25ac08e00a973a6093af353b0bd368681ab5f3ea7a2e9",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/app/ClientConsole.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/app/ClientConsole.java",
+                      "source_sha256":  "6f450579fa10f3cdcaf635fb69ea9f0f52f5baff9c56ca6549579be82a37d63d",
+                      "exported_sha256":  "d3410245313b33bf2a754b2d41695ba76fb5379b6f8e21f2bef5c958d0867d9a",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/app/DemoData.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/app/DemoData.java",
+                      "source_sha256":  "a0386549df2631233818a6a492cb919328daeb435f327d2cb678134808fd2d29",
+                      "exported_sha256":  "ce58cd8257eef3918a9d3d31f120f46a0b57829ea790af18a3cc20dfd313ceea",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/app/FrameworkDemo.java",
@@ -129,6 +199,20 @@
                       "source_sha256":  "97e7a0eb3c1f736bf5612537f4f0f5d68fef90417e15ef48aabd541c170ec14a",
                       "exported_sha256":  "97e7a0eb3c1f736bf5612537f4f0f5d68fef90417e15ef48aabd541c170ec14a",
                       "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/app/ServerApplication.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/app/ServerApplication.java",
+                      "source_sha256":  "89d29a99b37c8d6aa0009c4472f2b6b4792629736fe9627a69e007a2ed28a5d1",
+                      "exported_sha256":  "eb6834db658900405fb11a2fa7de4f7aa33fc6dc3b94a52de09db3722b14be2c",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/app/TlsContexts.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/app/TlsContexts.java",
+                      "source_sha256":  "db8949ff6caa6533f685fe914231275218928451f41307b2e4f97f8566000392",
+                      "exported_sha256":  "cd9bb73eb793ce917fb606c666109c2d33c43a46252c0f2bac3897d1aa181645",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/comment/CommentRequestContext.java",
@@ -140,8 +224,15 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/comment/CommentService.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/comment/CommentService.java",
-                      "source_sha256":  "4441b418fe90638b785c9cba861ef7b33017aa57f070d66d159d1c03aa237774",
-                      "exported_sha256":  "8d2f69e709fb937c7ccdc36c71a0e2d3fe4762a62fb8a19be24ecc3682fd8919",
+                      "source_sha256":  "29caec4fff80be2277a253e12a5c1cda7fa6d6589c86284a962acc66b791269a",
+                      "exported_sha256":  "d8ed31585a145d1d3b08fa2b13305c77dac0511539c6d72243609eddbef56504",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/client/core/ClientParticipants.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/core/ClientParticipants.java",
+                      "source_sha256":  "e5de6db4e013523bf543f0e317faec81a86f3ca8bad2e4388515bd10cae19ada",
+                      "exported_sha256":  "d257f3fc75c50afd38c7945811ee8eccdc6aef2b9c9e9f030782a0862fa1bdc1",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -175,8 +266,8 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/core/MessageParticipant.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/core/MessageParticipant.java",
-                      "source_sha256":  "c7bc6700d16ae5c273274cd0c992ea67878f9efc9d5ce1e5820fa48b772a9d75",
-                      "exported_sha256":  "15c730d9b8681818c9535d6fde6017d9157597bce4b91b69568a7f932777fb81",
+                      "source_sha256":  "7d11ecf90d1212661ecd90d29f7467dbdd017ef99668dea08ba3b3ae5e160e80",
+                      "exported_sha256":  "353c02f1399e9be62fdc9c8d4a8ea4485e170c005816f2a3e8ab6d579b781800",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -196,36 +287,36 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/logic/CrudOperationService.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/logic/CrudOperationService.java",
-                      "source_sha256":  "7fc6190de7502e6c00965d2380bde9e46f2b80d5def5ed7c1688a82f5cba9de0",
-                      "exported_sha256":  "800131ca48d111980a920e99f8d28a801c4b5e2096bee5fe9af490d3225136a1",
+                      "source_sha256":  "deda2f5e4b4f11295149a91731bf126910acb6328da0db678c6f5df955b04e13",
+                      "exported_sha256":  "1126cdea06c45e15ebe68a777a16ac90d356293425c5228a95d7f79e8ffa46c3",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/logic/PageCatalogService.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/logic/PageCatalogService.java",
-                      "source_sha256":  "91e600e8b8ce6d1a9219a98fce33c9c4b882839eee314d77bf7e7a124391c3ed",
-                      "exported_sha256":  "93fcdeef6161bef7e8f329495b6ff4229918a8533e709b4411f159de13b322dd",
+                      "source_sha256":  "cfe0394df46733614e98ec399e653caa47d7d5c8f1ba190a7c7ca48f5a3b4979",
+                      "exported_sha256":  "3a15b0dadf9e5b377f57948e2059af6431305dfa9eaa3a433aa6de254be18ced",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/logic/ResourceAcquisitionService.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/logic/ResourceAcquisitionService.java",
-                      "source_sha256":  "7d2d382030ec72c26b674c2426c3fa2cae60bd3c1357a595c5b4c76eb53d2927",
-                      "exported_sha256":  "4a6c5b7c003aec506a6dbbc4e244c524992186061333ce7abd48dfd079677211",
+                      "source_sha256":  "a85e45f78faea3befffdbbdb2717263efbc89ab721401d6b2782df0d9d6f7b36",
+                      "exported_sha256":  "cce496d52748023f59a06e5ad1f1414e63206f4810b27b4af7074003e06e0226",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/processing/EventProcessor.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/processing/EventProcessor.java",
-                      "source_sha256":  "4813f4abe7a31f83ea82479771e1ee30e91c95d61d4eba8f246adba17d1c027a",
-                      "exported_sha256":  "f71c0e685d54c0e2f6fa59639f01b873bb9868221b558007181ce77dac02f03e",
+                      "source_sha256":  "181f08321d6cc267fc0a1ee7a0abb839a7fd492c4adcd9b4bb4ba41d99f61e75",
+                      "exported_sha256":  "9ca744b2036ea7bf26bdaa6f9ef6f7291739b6ef98973606ba7be553f6b76d45",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/processing/PageProcessor.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/processing/PageProcessor.java",
-                      "source_sha256":  "f7a73ceb23f81718f637fa93c143105997f3079b61721ae88a3736d5387cd38f",
-                      "exported_sha256":  "2921e4ca0703b4cd9dbd8f17271054f1b53da86c3e6ae177b5abff9af3d3d5c9",
+                      "source_sha256":  "1403eb31d589dab794191b0d0d397dd918c552e3e9f01636e212d39a69eceb3d",
+                      "exported_sha256":  "47bce87852915d5e03267e233de8cf291f38376e494ff851bc08268bd86b7793",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -252,15 +343,15 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/query/DatabaseGateway.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/query/DatabaseGateway.java",
-                      "source_sha256":  "8a0611a547167768c50a56b763d37554c19fefe3b707d583c07cbe7f86a906aa",
-                      "exported_sha256":  "f936845fc6cbad8993069156ea789f82bf981ce0817cc7db9a7e3b657bd48ce4",
+                      "source_sha256":  "59ff20bdf625b13ed1f8f62698da62acf308351e727fb7873ef79b2d8065f662",
+                      "exported_sha256":  "44655e3e245bd931cdef5800c2ea3505de28a922447d7030af04e05951232cf6",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/query/DefaultRequestSecurity.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/query/DefaultRequestSecurity.java",
-                      "source_sha256":  "43861e9e14305c714eb2c7c1437cb5da574fc2b935c7453edea11f9dc7e28b34",
-                      "exported_sha256":  "6141066639bda6244dc88911f524fbf960ffd0b7da0096c50ee62f3ee34e9e6e",
+                      "source_sha256":  "c8ba4db1a4579378a736e4b28f32de0f09dbfc8f3c759c67712f6008f0ca9faf",
+                      "exported_sha256":  "e46e4831505af57e3a8a490e387a53cae95ef956fcbcdb9d2fd400ecb677f69b",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -273,8 +364,8 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/query/JdkHttpsTransport.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/query/JdkHttpsTransport.java",
-                      "source_sha256":  "fcd8f8d4046384931f8af5cdc442125f6cac95f55800ea5f174dc18673b0283a",
-                      "exported_sha256":  "f5948fc87ecd7f307069d3fe89fc1a6ce4ba449bb7a2ad62bdaab1fe6ee26f5a",
+                      "source_sha256":  "1401b33cbb167cf2f3d6c7ffaf177d6010922a31e81f77e41d71b21a24eb621b",
+                      "exported_sha256":  "8d06b44e373529527a9527bb3b09693cf6c3ed68df8ad5c08836dbe275f188d9",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -294,36 +385,36 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/query/ResourceGetTool.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/query/ResourceGetTool.java",
-                      "source_sha256":  "c99a403226ee2930b4254540fa886148da143e02e452e462d72c4191b7f8a99a",
-                      "exported_sha256":  "0d63e761152299569b843335b3db10ae3c5158e6c67a14fa28f7fb4d3792bdcb",
+                      "source_sha256":  "3da3a1cc03320624cd76164496e68edfd7ab42a37b64b6ad190ade7fb49aed20",
+                      "exported_sha256":  "63d52472e9b5afbf409e06f751c71a31fcb84806a94c8b71527aba6ec006a7d2",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/query/ResourceUploadTool.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/query/ResourceUploadTool.java",
-                      "source_sha256":  "557c1e4f2c10cca71cd310cc754689dbc9d36875b8cf300f1cae07d1b0852bb3",
-                      "exported_sha256":  "eea766d69548a8ec5b1ef7dfae17f7d2bff317e98179e39f5d2bfe4a991eb1ff",
+                      "source_sha256":  "ffb34f19437a02d227db8b25d004b76e3b861d6f79128bf0208c5730c0fec881",
+                      "exported_sha256":  "ecf7cfbdeb7a5e3647fea966e4413b28c3591f53d4c104f644d514663eed5cd4",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/resource/FileLocalResourceStore.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/resource/FileLocalResourceStore.java",
-                      "source_sha256":  "a1304bbae569ed34b89706c462c61f83995b83a64c181436e5c338cb520c7a20",
-                      "exported_sha256":  "84eb1d5de6e65f611b0bd9a7c84cbb8e977170082e55964ba3acb37a57b132f3",
+                      "source_sha256":  "45c33670777e63c7d41ceb354762acf374cd11f2646897f3ffd98674fe33d483",
+                      "exported_sha256":  "9ea80c13c0ef6cb7f7a956486d434a4b6eedbcaaa351e4850a659133561b442b",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/resource/FileUiLibrary.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/resource/FileUiLibrary.java",
-                      "source_sha256":  "895d0e921417d635af73a73f37c112fa25d0a9529063e592ce48229e19aef79a",
-                      "exported_sha256":  "b1fe89102d9d1fec46c0710f08655f358f69c2d1890509aec1b843284d36d640",
+                      "source_sha256":  "d7daf520fd18587f0e2c06dbbe523045526f00ac63062d3c0e2d74514b1fa89c",
+                      "exported_sha256":  "6922cd0ca69d76eb9df7d5d4f47c6d8c3c5dcd47aad7f27791dc33c23da38cc2",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/resource/LocalResourceStore.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/resource/LocalResourceStore.java",
-                      "source_sha256":  "f32c84e798fd43b1354deefa4646feb859218f72a6e4774a7159ec289c019734",
-                      "exported_sha256":  "bdb5108ac31134bf6aa1d349995e633b706288800d810555c7d665b646931a4e",
+                      "source_sha256":  "4a392ff727c96841f1dea0e13bd800195fc3f1fccb7c1386b98d9aa150596bc3",
+                      "exported_sha256":  "a28a95083d80df2a5a94f9b997487ecd3fb88fd21930fe1ffef2ad58fe77fb91",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -343,22 +434,22 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/security/SessionPermissionChecker.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/security/SessionPermissionChecker.java",
-                      "source_sha256":  "0751931c8a749fb9fff407811e70a6013914ed09f3f7fea24ad31958ac719155",
-                      "exported_sha256":  "f15322b12c3961a56ce5c5fe3c612a43f393e8cf8e3235499cff789c3df38333",
+                      "source_sha256":  "42b498682f10b63ba306d3313ea861b395d8bab261727ad177439bbd183c1ffe",
+                      "exported_sha256":  "81238d2d3acf8d86dbf8f8a6a55f49a744218e20c6bde4ef3b69792b37161bf4",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/ui/UiInteractionController.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/ui/UiInteractionController.java",
-                      "source_sha256":  "63208d98f08ad28772108c8979c4b255d9deb2925ba3b97637262f5658e6dcd2",
-                      "exported_sha256":  "e8f068ea0aa254bf35dae454e2b5461759a4044354a73618aa42605d159aa05f",
+                      "source_sha256":  "8e533b54d728e5cf59e1f11e518e78ae2506801668310625c51752fa8c49547e",
+                      "exported_sha256":  "edf14ef0d9f1052f02e6776e498d4651f374cff3a92617c1a77a5f8429217db1",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/client/ui/UiResourceForest.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/client/ui/UiResourceForest.java",
-                      "source_sha256":  "e33ce3060ba811e095287de793cf6aa4fe4ed1e87e780be3b763e8f646b0f18f",
-                      "exported_sha256":  "92cd8fe05463bb1f3f28762d9c91a3e4b547755f6a9b401f1fc01cf4bed748f4",
+                      "source_sha256":  "65b1bbc2d0db9579ad41dda18c2994b3c4c0e53a676955288cdf350a60ee68ab",
+                      "exported_sha256":  "7daf36603486ace6cf1a1db26808989f3888cc9351c7551a4c25afaacb1399d5",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -380,6 +471,13 @@
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/comment/CommentAttachment.java",
                       "source_sha256":  "e4ce65121d494a5858a538dd1705764766f9c1689153daf81c5db2a1e51eef37",
                       "exported_sha256":  "231fcd5af60aa84b845f3cf2b97c721dc7cdb6a506c446e744cf985534d16ac6",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/comment/CommentDraftPayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/comment/CommentDraftPayload.java",
+                      "source_sha256":  "65b9e66bf5aafba0a8bda18d82d55c61279369e5ef22edb8328308cf40307c00",
+                      "exported_sha256":  "3f6dd7f40b51d40ef3079811d185e5251361ba60b50139c74c0cfeb9c5396d0b",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -532,8 +630,8 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/model/common/Permission.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/common/Permission.java",
-                      "source_sha256":  "86d350623a0a4c1f9a37ff5be29e26f7acf6ac7aec25b1e4e57fb609b6297432",
-                      "exported_sha256":  "28d20c30311549e7ebafeff2bf702f05556ac38e514906a09b122ff170a0ad77",
+                      "source_sha256":  "80d028ff1b460ec95b47804764e03da1e7e8c089972dae951e844acac1ef7740",
+                      "exported_sha256":  "c4f1e2f5d3d0ce15f0dc6fd61413f28593d1d2d5c4f291670e5a29ea0e1cffa3",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -565,10 +663,24 @@
                       "transform":  "utf8-lf"
                   },
                   {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/message/BinaryMessageCodec.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/message/BinaryMessageCodec.java",
+                      "source_sha256":  "43b18fe3c8dfa6aa8eba93838decc8ab9c9e859b741d56e3341aec135f5f19e8",
+                      "exported_sha256":  "9e0baca8cf5dfe44ec8204ed5b9c4ac651e3dbbd98fcd2cc239d69c9590e21b4",
+                      "transform":  "utf8-lf"
+                  },
+                  {
                       "source":  "src/main/java/edu/nju/sehw/takeout/model/message/EmptyPayload.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/message/EmptyPayload.java",
                       "source_sha256":  "77ed5fea5d1c43a3a6acaffc6e23cd54be73af8abae20d073aa880f2a5e300b2",
                       "exported_sha256":  "7b7f00bbcd006a4eb5fa39fe8ea84d2b06c1a553b71f149a1ef6443e05cf80c9",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/message/EnvelopeCodec.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/message/EnvelopeCodec.java",
+                      "source_sha256":  "a21db2aa82c9a7bfbcaf6ef043644a285b12927b68d868f81f1d5ef3a5cf052e",
+                      "exported_sha256":  "d836b43941149fa38781a4af5352d92ba01aaf58b044ea3d8d1c2ffa84d2f51c",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -616,8 +728,15 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/model/message/OperationCode.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/message/OperationCode.java",
-                      "source_sha256":  "056a9c784ec4b9827a533db2476e006457fec086f4cf2f1ca439e2e19334e0a9",
-                      "exported_sha256":  "d8d052eab76c03e85d51e053e03738780bf66f7c8055faf865033803753afeb8",
+                      "source_sha256":  "7c2fe3836d8d4a544ee7f011cdbd5c174e264aecf61b3f4546d05e0921d7c389",
+                      "exported_sha256":  "f1f13fb2500643b63ccfc1d338e33e1f034dcf2644c0303519139d4af7520409",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/message/OperationReplyPayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/message/OperationReplyPayload.java",
+                      "source_sha256":  "522b8dd33b0b3279770f7ba65b724ad866300180354ce412d61bba1955af49df",
+                      "exported_sha256":  "e38bf0350ab07f818e639e3c8a1f33e2e7b5736725cd75df611f1a79ea26dfb1",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -628,10 +747,31 @@
                       "transform":  "utf8-lf"
                   },
                   {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/message/OperationResultsPayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/message/OperationResultsPayload.java",
+                      "source_sha256":  "eda2b5117a41301bc40c929c48a80bc0cd27c05541554bce191152e61958b5ae",
+                      "exported_sha256":  "e5160d112e843afacdcdbf2cbd67cc8375b193b303b4021b65435ff2e7fa95f0",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/message/TargetPayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/message/TargetPayload.java",
+                      "source_sha256":  "4c0f1d843a7c971e3621965dab10dceaf1afe4311fd1bf9cbba3e0ac70fd5f4a",
+                      "exported_sha256":  "1b9ccd95a621567f960c05a099c1e713f9f7faac6f8b98c421eecafd54f57859",
+                      "transform":  "utf8-lf"
+                  },
+                  {
                       "source":  "src/main/java/edu/nju/sehw/takeout/model/network/AccessToken.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/network/AccessToken.java",
                       "source_sha256":  "f111f0b856df7edc8363573217f25e5d7dce63f3348006fb81bed28eb7964f9b",
                       "exported_sha256":  "dcf07d5b0df264d12723adc4b84dbcb83d7cd3cd3b7f850f18a3dea7c48a1533",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/network/MessageDigests.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/network/MessageDigests.java",
+                      "source_sha256":  "93807fa3c423b2982d94656657cc1a5a12c924640d18aa7633c3408ffe0e421b",
+                      "exported_sha256":  "dd3e1463d18fa038f04ee6a2a56d5cb3988f8fd18d35ea9b897029455b830f28",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -688,6 +828,34 @@
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/order/OrderStatus.java",
                       "source_sha256":  "393a60cb87ce195278fd902f30946c55236ffa30fdc2755626e6c3d578f3b3f6",
                       "exported_sha256":  "69690067e548e357efe3419e76dae8de104d75acbb6ac3afb74c8e87d34c7bf7",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/order/PlaceOrderPayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/order/PlaceOrderPayload.java",
+                      "source_sha256":  "47aaf647678a9d4357a6983c3d0d5d193ae012e6fdc99bbb7ce5731b65e64efa",
+                      "exported_sha256":  "d42e0d9fda0f92bbfc670202841bb63dcd97b78d6661d1bedb84afb3e57fc363",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/order/ResolveCasePayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/order/ResolveCasePayload.java",
+                      "source_sha256":  "f28f064c3102b7dd08d29c8ed1c563e6e9b2ee0f7327ee5e38d56561203a9a85",
+                      "exported_sha256":  "27a202ac7e263a75f5ccfeab0f98c2c3910db8761ed607bbca95f0a1705002d7",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/resource/AttachmentUploadPayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/resource/AttachmentUploadPayload.java",
+                      "source_sha256":  "5b3278f1025689ac2d5a40d6f23237801dfb933c813dbc67ea16896eff5f7a5d",
+                      "exported_sha256":  "84f98bdbfc5ecca395126d08d35147ed3bff9205e88a1b3e3b8c7cb5fbbb4c05",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/resource/ImageMedia.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/resource/ImageMedia.java",
+                      "source_sha256":  "f603113b8dc3bbc8cbd5e4d9fc0b61e453c02e6c2d433d9fd581e42e8bccb518",
+                      "exported_sha256":  "32e3800a615771d717153381030324d87dc249a261a616c5964f769da5a28eb2",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -789,6 +957,13 @@
                       "transform":  "utf8-lf"
                   },
                   {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/model/ui/PageActionPayload.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/ui/PageActionPayload.java",
+                      "source_sha256":  "4defd6da3e3addf93d61aea73a30b1aefa26622876ac25c85e95a1056065228d",
+                      "exported_sha256":  "8bd205d2331253ca841da14391e7cb1af33ab70d69a386ac3f8db87ea1ca1211",
+                      "transform":  "utf8-lf"
+                  },
+                  {
                       "source":  "src/main/java/edu/nju/sehw/takeout/model/ui/PageManifestPayload.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/model/ui/PageManifestPayload.java",
                       "source_sha256":  "1b537a052b26acda32be5ffe7c493cfdfc0965421c653742268e21d90c8e0302",
@@ -882,8 +1057,8 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/comment/CommentOperationHandler.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/comment/CommentOperationHandler.java",
-                      "source_sha256":  "75d21e81f59ac171d6a91c239541761b532633017e8001e1db03aabf50bdbebe",
-                      "exported_sha256":  "c1f03bc8e0df4f439b9584c567e667ba3940427e03f40887148e93cadb283925",
+                      "source_sha256":  "37f4df540b229c4bf58a088ae664eba74ae4c7a7b779f74b850afb3b5b40dd3c",
+                      "exported_sha256":  "e91e009d33ac93b2cd444017770a2628582955978e248ccceadd0901add0923b",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -903,8 +1078,8 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/comment/DefaultPurchaseEvidenceResolver.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/comment/DefaultPurchaseEvidenceResolver.java",
-                      "source_sha256":  "1dfb74c232b2a98c0705ab7166f949ead7b973264f80ba03004d6583d5302f87",
-                      "exported_sha256":  "254716847caa5358188c83bef8d5decb9814ef2101ee6ee8a7195806c0d45e49",
+                      "source_sha256":  "5aff8aa8eec93c52f1eb3cbf2691d7899395d0106700227f6ffaf390b5e820af",
+                      "exported_sha256":  "149282d41aea6cd34e77ab125d8a581a2fb8e5ddd3f92cf3f6c2220847334dda",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -917,15 +1092,15 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/comment/JdbcCommentRepository.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/comment/JdbcCommentRepository.java",
-                      "source_sha256":  "45d77c4a47c08aafa5ba239c0182fbc3e0d220dd2010fa94a4d283363974bf54",
-                      "exported_sha256":  "1afae82c0702d7c6e4de3e40b034b4127ee7f0675227bcfaafe2a0f9e97d4080",
+                      "source_sha256":  "2841a4e7cfc243e6ea1cac5638d4702d5a7310fc41b70c340a93f8bdfc7338cb",
+                      "exported_sha256":  "106adde0b84259d19baff31e261eefdc70f3a4c4f256481720de45e707c4f5b8",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/comment/PublishCommentCommand.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/comment/PublishCommentCommand.java",
-                      "source_sha256":  "ad3228db99ee21d555152db59f43d2c3655f4481ffd7edf85b016261edfd9491",
-                      "exported_sha256":  "cf36d3922d3afe829babe80ec07bc3fb65186f183160fae04704c4037b4bc0a7",
+                      "source_sha256":  "d4eab4320fe3e694473148f1dbbd1265a815402074106ec717c6cb09acb9201a",
+                      "exported_sha256":  "3c79599cc68294dcf465d11c970b255ca91282c73628c8203a6b0191bee4cdc8",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -957,17 +1132,24 @@
                       "transform":  "utf8-lf"
                   },
                   {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/server/network/HttpsEndpoint.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/network/HttpsEndpoint.java",
+                      "source_sha256":  "f30b210a087d4516a4332cb5e8264b0f9429c6550dbbbbde5afad9c06a15e91a",
+                      "exported_sha256":  "8a41ca77e4c32383584eaeb81d11ba6cfca82b276e2c9c7a0a6f8f09eaddf62a",
+                      "transform":  "utf8-lf"
+                  },
+                  {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/network/ResponseSender.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/network/ResponseSender.java",
-                      "source_sha256":  "19ec6455a73404d27383e5e3dc0ae2c9f01dd3bb1ae0406c0085bdd0fde71c63",
-                      "exported_sha256":  "6c56d2740a45728cb1f98f46383a570be891a3bd7007dd17d5afabd7d282a54e",
+                      "source_sha256":  "5ab24d08844c9e2485160c31f2a4b3b8bafc11c5cf93bc1a6e07b507dc1a08eb",
+                      "exported_sha256":  "26b9628c333797efa4ab6c2cb3289784188b51ad06eadd1a88ba36b91c1009f4",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/network/ServerReceiver.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/network/ServerReceiver.java",
-                      "source_sha256":  "55e684bc48b8d20e6a8a836207949b57b4a156bf608d334006184084780807bd",
-                      "exported_sha256":  "8ae6ca211b2b5a37a1ebf40f50810866d81c82ffeca8a39420f844a88080ff8d",
+                      "source_sha256":  "144b6b68f07edf3a7c582cd8b80744c8b1ad49bed4386b18accf843d1393f94b",
+                      "exported_sha256":  "49c5f6eb0e2783f5b860c8700caaa320866319d22819064e20298c4e3efeb0c8",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -975,6 +1157,13 @@
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/operation/OperationExecutor.java",
                       "source_sha256":  "70b570c758e0c7b2b6ee6c3da6392c5086d0d960582ace0476efe940e67a8550",
                       "exported_sha256":  "5771aeb47df3ee6517f45f8376912f358eb50ced54232765bdd0dc49d488cc80",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/server/operation/OperationFailure.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/operation/OperationFailure.java",
+                      "source_sha256":  "dc1b52fb992aa440c0771a8c9bb593d967eeff66989a6c3690fe461632e74c90",
+                      "exported_sha256":  "2b1083e330ff0ea5f7c975787a030e6e02c957c48d52c64057238aa915a9f2f1",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1001,8 +1190,15 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/operation/ServerOperationExecutor.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/operation/ServerOperationExecutor.java",
-                      "source_sha256":  "34817101b875f638c84aec7d30221ebadabce430367a4b74f3a21c5d6b5ff098",
-                      "exported_sha256":  "7ecf98dbb0008409fb7ab1e54ece40729b0e03b6e4d9f411cb53eef7541e4381",
+                      "source_sha256":  "2026d2a1e5bb44a57f791ed30d0a45be1176103d0fcb743499605d19167ee129",
+                      "exported_sha256":  "35d4cd82d615874dd605e1a98112e79fcb092ad9afa9ea9e6a7a70b2e88975a0",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/server/operation/StandardOperations.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/operation/StandardOperations.java",
+                      "source_sha256":  "6806c603587ac1706a1d184fa5b14cbe93752b8f8e04084a614c895fe788131b",
+                      "exported_sha256":  "f1cc269ad7c2f08ff027f00e7740ceac0c99d72081dd3093f0fbd81c9aa9b231",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1027,17 +1223,31 @@
                       "transform":  "byte-copy"
                   },
                   {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/server/order/JdbcExceptionCaseRepository.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/order/JdbcExceptionCaseRepository.java",
+                      "source_sha256":  "e4b8e586ef657328e1eb646253d4a4997bfebd256d091a2cd670d253d630f79e",
+                      "exported_sha256":  "966e2c916f2c72a1761110db916593d9da76d34194fc38e94aac933e88b8f4e0",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/server/order/JdbcOrderRepository.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/order/JdbcOrderRepository.java",
+                      "source_sha256":  "5a21f3349adb2e57b28746c6182ccee0684a9ce1edae63dca58041ca4fb0f5e1",
+                      "exported_sha256":  "212a65a917797e3f3b01139bf8b7f2cb399b2104fff7f85088982f383c234d4a",
+                      "transform":  "utf8-lf"
+                  },
+                  {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/order/OrderOperationHandler.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/order/OrderOperationHandler.java",
-                      "source_sha256":  "a5d65cc1650a90f33faaed52932362b75881901fe983f136378004d8dbd1684f",
-                      "exported_sha256":  "66023e2f35ff743dd71f3e5f6f21aab6ded4646522a7aa4efcc3954192e9d78c",
+                      "source_sha256":  "d3fd6b9cbdcd1a34f9cb4459acd9d2fe425f9ec2097d167090a1190d39148043",
+                      "exported_sha256":  "595bf154324b839e91e61f738f5926c55c62a8b0556f1b45f973cd0bace295f4",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/order/OrderRepository.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/order/OrderRepository.java",
-                      "source_sha256":  "b21d7f930c1657a66f455ba305e0ff6e74181b7749488f2694947b67dad78bee",
-                      "exported_sha256":  "9b88a831dc58db9287e4a9b1c623b994a89868a6ce2c799567c42b60e8c4d6f4",
+                      "source_sha256":  "1dde8b1a38adedd49b01f7086192244d6669e1c0c7a5a9d83d79dda03a4dbd07",
+                      "exported_sha256":  "c3b6e4627b996e83c263e691bf3b089f04c21a933bf0b60dd464bcff6d340c70",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1069,17 +1279,24 @@
                       "transform":  "utf8-lf"
                   },
                   {
+                      "source":  "src/main/java/edu/nju/sehw/takeout/server/persistence/Jdbc.java",
+                      "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/persistence/Jdbc.java",
+                      "source_sha256":  "57d2f24faf3254e24a35e681c8b4cb5ddf95d9c178c50cad57314203398ab2f3",
+                      "exported_sha256":  "d18bf384f6f66db1363b2b673a8c6f3227186f8bcac76f722edd849b77843aa7",
+                      "transform":  "utf8-lf"
+                  },
+                  {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/persistence/JdbcDatabaseAdapter.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/persistence/JdbcDatabaseAdapter.java",
-                      "source_sha256":  "a72ae1c03f4eec3f36a5d82431fae79841557073651925d5300ee5b0bfb6bd68",
-                      "exported_sha256":  "854422fffea6c43a07c599a3ac593bf61387b41ac6a3ce2cb21192809365cb7d",
+                      "source_sha256":  "cfb3834e9fe2b0608402adb96c11c296c794acf8d3defaebab5a90c917802c88",
+                      "exported_sha256":  "796b70d2c477b05f9621602e3993a45cf91ea494b6419769da125e44bb30607f",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/persistence/JdbcIdempotencyStore.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/persistence/JdbcIdempotencyStore.java",
-                      "source_sha256":  "953e27f4aca2908df1592bbe971f112779b96625a24d259738caf1aa51298f6f",
-                      "exported_sha256":  "45dec73eafd0e7d536b67888193b7273e7fc6e74f10071c79c41d7eec694bd25",
+                      "source_sha256":  "ecaaf90c09978eb0f8fdb57248b6f533c533d82f90a1fa2fb89840b149a1d9f6",
+                      "exported_sha256":  "7cc685d34729752f93e58ca880bc478e19e7057acf2241f5f8a403e4e2c65865",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1092,8 +1309,8 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/persistence/TransactionContext.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/persistence/TransactionContext.java",
-                      "source_sha256":  "27b001fe734aa62cfee6d1ecb129d30672f3ec8372cf7eb5d7c1ae578bfcbb0b",
-                      "exported_sha256":  "ce7a1e4329395c2f107c6902db30bab8e0ba6d8fc7438eb6ec087bf809a6e091",
+                      "source_sha256":  "38b5e25df9ee9b2c56bf2fb808f9a4b7e671c0919710efe2857ddb9e95cc690c",
+                      "exported_sha256":  "83f303f8a40e64d010f1b03380552e4818c9890c629fd2639804c9d802c688d8",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1113,36 +1330,36 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/resource/FileServerResourceStore.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/resource/FileServerResourceStore.java",
-                      "source_sha256":  "6ef38b00185569d44f7fc5b9d19fb6bb498c0d01e850a5fb4e047d32659971e3",
-                      "exported_sha256":  "004cf6fdd3f5c60a0ac71e7c0209ccc24e7ccb7070a16a2c58894ab193380ac7",
+                      "source_sha256":  "f43ac34f066dcf1c592af5452113a74e8e441a58f7a860367dce20affbba5de4",
+                      "exported_sha256":  "3884ba28ce08f12a6ba552ed0c4dc273fedd57da7696738138cd9dea27835c51",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/resource/ServerResourceStore.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/resource/ServerResourceStore.java",
-                      "source_sha256":  "05f2cb5eebc467f6887131c8472f5b6a694511138e4997143533eb7563c70505",
-                      "exported_sha256":  "06f05bcca119c6ffa08f366ea04772e0093378485f30dd661acd24cec7a865e2",
+                      "source_sha256":  "5eb718df17fc894ff214ce1eeab1ab2b6352477e593032ab2d1e0633d683bd0d",
+                      "exported_sha256":  "fe10db4e7579b6b0820dadf845eceb00f2bf342dfcbdfbff366d7aa079cafb50",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/resource/ServerUploadHandler.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/resource/ServerUploadHandler.java",
-                      "source_sha256":  "e5decb6f4a5c6f92a07632d720e57e21dc885975fd8336a8503e62cb7d95b1d8",
-                      "exported_sha256":  "638bc1077e8b3306a6b7c8440651d072e0bc444ed3c80754f074c66d9e0edcdb",
+                      "source_sha256":  "24face3acc52d716499e5e8bdc38cde630ebb08eb6ae2de32434213c6d3d18d2",
+                      "exported_sha256":  "fe89092372ef0e5c22d831064be2bb531b68355ee317c3d044374141a0c91ebb",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/security/DefaultServerPermissionChecker.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/security/DefaultServerPermissionChecker.java",
-                      "source_sha256":  "8a24381d08b0bdbf5ca543eb5a80f47a48457b448156b342e22b763e30c42b9b",
-                      "exported_sha256":  "81138252bea6244236451ed55bbba04cf3daaddba22b6a1ecfafae1fb8ee729e",
+                      "source_sha256":  "110cae70cd5f6bfa7ecc166bab85e083750c9d977a99c0e7495b868b6dbfc40b",
+                      "exported_sha256":  "7451cc64b83d2a81cc759c555f4f81f9037dfafa093fcc658c837ecfb0314498",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/security/DefaultServerRequestVerifier.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/security/DefaultServerRequestVerifier.java",
-                      "source_sha256":  "55ccfec7cd591ca089f70f190f735bc2d9318fcf53d0798359ce0aeebd30775a",
-                      "exported_sha256":  "fcbbf05e1c11c71cc2835421a48a2a4d251b341916cb5e12ac1840056ebe7c58",
+                      "source_sha256":  "70a7421dbacab80197354454057fda124f0ef80475f08b5d406ddf7fba6f20c8",
+                      "exported_sha256":  "7c25cf9af75fb9fdfacb2ffd17eec564cb83f731ec1aa530460f007142bf6354",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1183,8 +1400,8 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/task/TaskPool.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/task/TaskPool.java",
-                      "source_sha256":  "c5e5fa90e79a8b9ffb8ed17510894de1d15408a523630c5b0b1eaf5ea88ad8da",
-                      "exported_sha256":  "76ddacbe074ce855369ccf06cb57dacbce8bbe1099a3eb43b178dd2ad09aa700",
+                      "source_sha256":  "3886e4d2263380c399bc0705192c617933913f562ebcaf55d60315d9b3d800d4",
+                      "exported_sha256":  "d97701cbb9c8885eff51b529cb33a062c2e397989105a080a818e6a0804bb0ef",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1197,15 +1414,106 @@
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/task/VerifiedUpload.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/task/VerifiedUpload.java",
-                      "source_sha256":  "b2fc75e84bb13b4c4a38708e48c7c0f17cee8e754428097f8d1c70439e33f630",
-                      "exported_sha256":  "22360aadc27d8c2f78fbb2bd9f2cd5a5747aeede4d996c2fafee3809d2338e4f",
+                      "source_sha256":  "87c0dd6cfe526d9f76d23f7d6e2ae15e7ac2009a4a8fc3112bd1f5662664a4b1",
+                      "exported_sha256":  "2973cbafc4c1377d30d9e54211c04a2d966ae85b928577020ae4f294711a5f8d",
                       "transform":  "utf8-lf"
                   },
                   {
                       "source":  "src/main/java/edu/nju/sehw/takeout/server/task/Worker.java",
                       "target":  "lab3/src/main/java/edu/nju/sehw/takeout/server/task/Worker.java",
-                      "source_sha256":  "b37bb3c2ce3efa3d0a808d4d81fd90fb2152ddf674b1fd44773782fdabc418f8",
-                      "exported_sha256":  "0503c3defa0982eca08a3eee0f37c46cc6100ea206a8a483baa2b8c69a6b6e9c",
+                      "source_sha256":  "743a067b966ebc9f5db362861a7257eea76ca726eb1f3a5fa1e4dcefe49f14be",
+                      "exported_sha256":  "4637dbfb26ebeffd6d83b791470596f94a0c29c730289412db123db09aae9471",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/resources/schema.sql",
+                      "target":  "lab3/src/main/resources/schema.sql",
+                      "source_sha256":  "8a4b880a61e86bcd5fcee3371b3d9a686c555f331ed59e1ef1e393477a89d120",
+                      "exported_sha256":  "8a4b880a61e86bcd5fcee3371b3d9a686c555f331ed59e1ef1e393477a89d120",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/2/1001",
+                      "target":  "lab3/src/main/resources/ui/2/1001",
+                      "source_sha256":  "e5d77fc47f24f169868127a6cb78c0b67e3ef543edf46dcf337c694d239d22a2",
+                      "exported_sha256":  "e5d77fc47f24f169868127a6cb78c0b67e3ef543edf46dcf337c694d239d22a2",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/2/1002",
+                      "target":  "lab3/src/main/resources/ui/2/1002",
+                      "source_sha256":  "eaba473783bd4f21354ca84e001b59de3cb3973b6be17d9ae682b329edf5183a",
+                      "exported_sha256":  "eaba473783bd4f21354ca84e001b59de3cb3973b6be17d9ae682b329edf5183a",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/2/1003",
+                      "target":  "lab3/src/main/resources/ui/2/1003",
+                      "source_sha256":  "6c802d3438dfd556adcfba90ae812bb23e04857463f4a7a9f96d4c20347f08fd",
+                      "exported_sha256":  "6c802d3438dfd556adcfba90ae812bb23e04857463f4a7a9f96d4c20347f08fd",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/2/1004",
+                      "target":  "lab3/src/main/resources/ui/2/1004",
+                      "source_sha256":  "4f73455fd1651f7897f897e0627a514228fa60597586f5f51457d78e7c05f21d",
+                      "exported_sha256":  "4f73455fd1651f7897f897e0627a514228fa60597586f5f51457d78e7c05f21d",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/2/1005",
+                      "target":  "lab3/src/main/resources/ui/2/1005",
+                      "source_sha256":  "e4eb212074e0e66dbed36c5c45705af6f5a8e8f77005efa00c7f084015648039",
+                      "exported_sha256":  "e4eb212074e0e66dbed36c5c45705af6f5a8e8f77005efa00c7f084015648039",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/3/2",
+                      "target":  "lab3/src/main/resources/ui/3/2",
+                      "source_sha256":  "02483c6f3efe192febf55ee93a446dbb68227637e0b0c8449b0d630fa68da2af",
+                      "exported_sha256":  "02483c6f3efe192febf55ee93a446dbb68227637e0b0c8449b0d630fa68da2af",
+                      "transform":  "byte-copy"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/pages/1001.properties",
+                      "target":  "lab3/src/main/resources/ui/pages/1001.properties",
+                      "source_sha256":  "32eb387a7b5a88b11bcc65ca8c6c8a595426d31eda102322326d4391bf750453",
+                      "exported_sha256":  "142192632df98af82d916582853087216f4fac64b96424446a9ef2655bd9237b",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/pages/1002.properties",
+                      "target":  "lab3/src/main/resources/ui/pages/1002.properties",
+                      "source_sha256":  "a0ea459b0599442e2ed1d135571985f6a40ea1239ba11754038e9876ecbb41eb",
+                      "exported_sha256":  "df1045bc849f562ba6f774f8cbd0d22c49d776e6f3b2e6e0e53d9826b1d237ea",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/pages/1003.properties",
+                      "target":  "lab3/src/main/resources/ui/pages/1003.properties",
+                      "source_sha256":  "e03a0c3b31b3c09d0115ed7997475ec118a715a073a55290a94d68cc2dc4a7a1",
+                      "exported_sha256":  "5100ec56c6ca0f5b4938720bd54968ef1e0fb51cc83afad766e217fab62b529c",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/pages/1004.properties",
+                      "target":  "lab3/src/main/resources/ui/pages/1004.properties",
+                      "source_sha256":  "60365d595f935f1b7f71cfa4b1597f047eab1acce6896098cf4308b9ea62f3af",
+                      "exported_sha256":  "fc6781996c0876ef2cc96d951c49675f0a1e94d351b5ca2b5427cb3e11f6dfe2",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/main/resources/ui/pages/1005.properties",
+                      "target":  "lab3/src/main/resources/ui/pages/1005.properties",
+                      "source_sha256":  "688decec103bb662069dfedb0097454ba3ef8eb4ae50e4f747a7d32771f23799",
+                      "exported_sha256":  "af969da77e0edb9d4cd56db2ef6f048b685a6927400fca57595d4d8a59e72ec1",
+                      "transform":  "utf8-lf"
+                  },
+                  {
+                      "source":  "src/test/java/edu/nju/sehw/takeout/app/TakeoutIntegrationTest.java",
+                      "target":  "lab3/src/test/java/edu/nju/sehw/takeout/app/TakeoutIntegrationTest.java",
+                      "source_sha256":  "589b468ff4ddf870f64b5e2fed1e3a6b59a5525d6d2e268a87c10fe870f2c2fc",
+                      "exported_sha256":  "73c075a6906d1fed80c1e8b1eb2ff84ce485312a2a91b4dd722043804c541f2c",
                       "transform":  "utf8-lf"
                   },
                   {
@@ -1218,8 +1526,8 @@
                   {
                       "source":  "src/test/java/edu/nju/sehw/takeout/client/core/CoreRoutingTest.java",
                       "target":  "lab3/src/test/java/edu/nju/sehw/takeout/client/core/CoreRoutingTest.java",
-                      "source_sha256":  "2e0767fb8aff2e990d74910e93d19c269371163642c3b916bf718c912f27d637",
-                      "exported_sha256":  "2e0767fb8aff2e990d74910e93d19c269371163642c3b916bf718c912f27d637",
+                      "source_sha256":  "e4f6a3da55bbeccf973c87e679f7452ded5f42d874201ff447605234f5ef933e",
+                      "exported_sha256":  "e4f6a3da55bbeccf973c87e679f7452ded5f42d874201ff447605234f5ef933e",
                       "transform":  "byte-copy"
                   },
                   {
@@ -1232,30 +1540,30 @@
                   {
                       "source":  "src/test/java/edu/nju/sehw/takeout/model/ProtocolContractsTest.java",
                       "target":  "lab3/src/test/java/edu/nju/sehw/takeout/model/ProtocolContractsTest.java",
-                      "source_sha256":  "49eb8ce8f8c434cfc2bc3a430f52a58944afb38d7c2be7b11f18271fdf453dba",
-                      "exported_sha256":  "49eb8ce8f8c434cfc2bc3a430f52a58944afb38d7c2be7b11f18271fdf453dba",
+                      "source_sha256":  "27a8b1e72ffa1bd62acd5f9d363198761c24b4cf81470c24cfcb60c773db2db2",
+                      "exported_sha256":  "27a8b1e72ffa1bd62acd5f9d363198761c24b4cf81470c24cfcb60c773db2db2",
                       "transform":  "byte-copy"
                   },
                   {
                       "source":  "src/test/java/edu/nju/sehw/takeout/server/task/TaskPoolTest.java",
                       "target":  "lab3/src/test/java/edu/nju/sehw/takeout/server/task/TaskPoolTest.java",
-                      "source_sha256":  "c5158bc0aa345cffd53d9fc123e60dc7862f0b6daafee0723708f4d22c675f67",
-                      "exported_sha256":  "c5158bc0aa345cffd53d9fc123e60dc7862f0b6daafee0723708f4d22c675f67",
+                      "source_sha256":  "a3f9644c16c2abea9652b5ae6bdbab82196b8f89ed6fba9337fcca1463797ba0",
+                      "exported_sha256":  "a3f9644c16c2abea9652b5ae6bdbab82196b8f89ed6fba9337fcca1463797ba0",
                       "transform":  "byte-copy"
                   },
                   {
                       "source":  "src/test/java/edu/nju/sehw/takeout/testsupport/Fixtures.java",
                       "target":  "lab3/src/test/java/edu/nju/sehw/takeout/testsupport/Fixtures.java",
-                      "source_sha256":  "f9999be7bc4e4a2b303d3113bd9254ac04bc3997d82e386515f8f66d11d8fd4c",
-                      "exported_sha256":  "f9999be7bc4e4a2b303d3113bd9254ac04bc3997d82e386515f8f66d11d8fd4c",
+                      "source_sha256":  "f0fa3d6eaa4c224f14a82e5f4133a9245aa348b41cff1b7ebeb0e732ab7329f4",
+                      "exported_sha256":  "f0fa3d6eaa4c224f14a82e5f4133a9245aa348b41cff1b7ebeb0e732ab7329f4",
                       "transform":  "byte-copy"
                   },
                   {
                       "source":  "tools/javadoc.ps1",
                       "target":  "lab3/tools/javadoc.ps1",
-                      "source_sha256":  "15a0c449c3809ddf8dbff98a07fe28e510df7416c05244ec3ef640092af89884",
-                      "exported_sha256":  "15a0c449c3809ddf8dbff98a07fe28e510df7416c05244ec3ef640092af89884",
-                      "transform":  "byte-copy"
+                      "source_sha256":  "6be1bfd7868e5181dcf6a8bfd989180feba5bc133820036966b23a47d772e6cd",
+                      "exported_sha256":  "f1f5a39be8f606cbd6bd9ba19623eec22482be69d06ba3d75f53fde9e39bdafa",
+                      "transform":  "utf8-lf"
                   },
                   {
                       "source":  "tools/maven.ps1",
