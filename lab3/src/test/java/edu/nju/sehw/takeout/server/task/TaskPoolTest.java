@@ -55,7 +55,7 @@ class TaskPoolTest {
     CountDownLatch finish = new CountDownLatch(1);
     ExecutorService threads = Executors.newSingleThreadExecutor();
     try {
-      Future<VerifiedTask> worker =
+      final Future<VerifiedTask> worker =
           threads.submit(
               () -> {
                 VerifiedTask task = pool.take();
@@ -77,7 +77,7 @@ class TaskPoolTest {
   }
 
   @Test
-  void waitingForATaskCanBeInterrupted() throws Exception {
+  void waitingForTaskCanBeInterrupted() throws Exception {
     TaskPool pool = new TaskPool(1);
     CountDownLatch entered = new CountDownLatch(1);
     CountDownLatch exited = new CountDownLatch(1);
