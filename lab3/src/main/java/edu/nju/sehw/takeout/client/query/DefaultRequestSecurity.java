@@ -2,8 +2,8 @@ package edu.nju.sehw.takeout.client.query;
 
 import edu.nju.sehw.takeout.model.message.Message;
 import edu.nju.sehw.takeout.model.message.MessageCodec;
+import edu.nju.sehw.takeout.model.network.MessageDigests;
 import edu.nju.sehw.takeout.model.network.SecureRequest;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
 import java.time.Clock;
 import java.util.Objects;
 
@@ -43,11 +43,15 @@ public final class DefaultRequestSecurity implements RequestSecurity {
    * @param message message envelope containing request identity, routing fields, operation code,
    *     and arguments
    * @return a request envelope whose request ID matches the supplied message
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public SecureRequest prepare(Message message) {
-    throw new NotImplementedYetException("DefaultRequestSecurity.prepare");
+    return new SecureRequest(
+        message.requestId(),
+        session.accessToken(),
+        clock.instant(),
+        sha256(codec.encode(message)),
+        message);
   }
 
   /**
@@ -55,9 +59,8 @@ public final class DefaultRequestSecurity implements RequestSecurity {
    *
    * @param body canonical encoded message bytes over which the SHA-256 digest is computed
    * @return the 32-byte digest of the supplied body
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private byte[] sha256(byte[] body) {
-    throw new NotImplementedYetException("DefaultRequestSecurity.sha256");
+    return MessageDigests.sha256(body);
   }
 }
