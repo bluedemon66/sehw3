@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 /** Registers the built-in numeric operation identifiers used by the framework. */
 public enum OperationCode {
+  /** Forward UI input to the event processor. */
+  UI_INPUT(1000),
   /** Create an order from the customer's selected items. */
   PLACE_ORDER(1101),
   /** Request cancellation of the customer's queued order. */
@@ -18,6 +20,20 @@ public enum OperationCode {
   RIDER_PICKUP(1106),
   /** Record the rider's delivery and await customer confirmation. */
   CONFIRM_DELIVERY(1107),
+  /** Accept a pending order. */
+  ACCEPT_ORDER(1108),
+  /** Reject a pending order. */
+  REJECT_ORDER(1109),
+  /** Record completion of food preparation. */
+  FINISH_PREPARATION(1110),
+  /** Resolve an open communication case. */
+  RESOLVE_CASE(1111),
+  /** Read order details for an authorized participant. */
+  ORDER_DETAIL(2102),
+  /** Read the total for completed orders at a shop. */
+  MERCHANT_TURNOVER(2103),
+  /** Read the active tasks of the assigned rider. */
+  RIDER_TASKS(2104),
   /** Request navigation to or refresh of a local page. */
   OPEN_PAGE(2101),
   /** Request retrieval of a remote resource. */
