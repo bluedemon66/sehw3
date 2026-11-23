@@ -2,6 +2,10 @@ package edu.nju.sehw.takeout.model.common;
 
 /** Enumerates the permissions used by server authorization and client preflight checks. */
 public enum Permission {
+  /** Resolve customer communication cases. */
+  RESOLVE_CASE,
+  /** Read an order associated with the authenticated subject. */
+  READ_ORDER,
   /** Permission to create an order for the authenticated customer. */
   PLACE_ORDER,
   /** Permission to request cancellation of an owned order. */
