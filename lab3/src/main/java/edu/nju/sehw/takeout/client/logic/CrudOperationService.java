@@ -1,59 +1,151 @@
 package edu.nju.sehw.takeout.client.logic;
 
+import edu.nju.sehw.takeout.client.core.ClientParticipants;
 import edu.nju.sehw.takeout.client.core.Core;
 import edu.nju.sehw.takeout.client.core.MessageParticipant;
-import edu.nju.sehw.takeout.client.processing.RequestContext;
 import edu.nju.sehw.takeout.client.security.ClientPermissionChecker;
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.common.TargetDescriptor;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
 import edu.nju.sehw.takeout.model.message.Message;
+import edu.nju.sehw.takeout.model.message.MessagePayload;
+import edu.nju.sehw.takeout.model.message.OperationBatchPayload;
+import edu.nju.sehw.takeout.model.message.OperationReplyPayload;
 import edu.nju.sehw.takeout.model.message.OperationRequest;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.message.OperationResultsPayload;
+import edu.nju.sehw.takeout.model.message.TargetPayload;
+import edu.nju.sehw.takeout.model.order.OrderCommandPayload;
+import edu.nju.sehw.takeout.model.order.PlaceOrderPayload;
+import edu.nju.sehw.takeout.model.order.ResolveCasePayload;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Translates a client business request into numbered data operations sent through Core. */
+/** Validates local order and scalar requests and routes their results through the Core. */
 public final class CrudOperationService extends MessageParticipant {
-  /** Permission preflight or server authorization service used by this component. */
   private final ClientPermissionChecker checker;
+  private final Map<UUID, Batch> pending = new ConcurrentHashMap<>();
 
-  /** Request-specific arguments and UI origins retained while operations are pending. */
-  private final Map<UUID, RequestContext> contexts = new ConcurrentHashMap<>();
-
-  /**
-   * Creates this participant with the dependencies documented below.
-   *
-   * @param participantId positive identifier assigned to this participant in its local Core
-   * @param core local Core that owns this participant and routes its messages
-   * @param checker permission preflight or server authorization service used by this component
-   * @throws NullPointerException if a required component, dependency, or collection element is null
-   */
+  /** Creates the service with its local permission checker. */
   public CrudOperationService(int participantId, Core core, ClientPermissionChecker checker) {
     super(participantId, core);
-    this.checker = Objects.requireNonNull(checker, "checker");
+    this.checker = Objects.requireNonNull(checker);
   }
 
-  /**
-   * Plans the numbered data operations required by the incoming client business request.
-   *
-   * @param message message envelope containing request identity, routing fields, operation code,
-   *     and arguments
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
   @Override
   public void parse(Message message) {
-    throw new NotImplementedYetException("CrudOperationService.parse");
+    if (message.senderId() == ClientParticipants.GATEWAY) {
+      completeOperation(message);
+      return;
+    }
+    var operations = planOperations(message);
+    if (operations.isEmpty()
+        || new HashSet<>(operations.stream().map(OperationRequest::requestId).toList()).size()
+            != operations.size()) {
+      finish(message, new ErrorPayload("INVALID_REQUEST", "Expected distinct operation IDs"));
+      return;
+    }
+    try {
+      for (OperationRequest operation : operations) {
+        var check =
+            checker.check(
+                operation.operationCode(),
+                new TargetDescriptor("domain", targetId(operation.payload())));
+        if (!check.allowed()) {
+          finish(message, new ErrorPayload(check.code(), check.description()));
+          return;
+        }
+      }
+    } catch (IllegalArgumentException ex) {
+      finish(message, new ErrorPayload("INVALID_REQUEST", ex.getMessage()));
+      return;
+    }
+    submit(new Batch(message, operations.iterator(), new ArrayList<>()));
   }
 
-  /**
-   * Selects the ordered data-operation plan for the business call identifier.
-   *
-   * @param callId numbered event or navigation action selected by the incoming message
-   * @return the numbered operation requests to submit for that business call
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private List<OperationRequest> planOperations(int callId) {
-    throw new NotImplementedYetException("CrudOperationService.planOperations");
+  private static List<OperationRequest> planOperations(Message message) {
+    var payload = message.payload();
+    if (payload instanceof OperationBatchPayload batch) {
+      return batch.requests();
+    }
+    return List.of(new OperationRequest(message.requestId(), message.operationCode(), payload));
   }
+
+  private void submit(Batch batch) {
+    var operation = batch.operations().next();
+    if (pending.putIfAbsent(operation.requestId(), batch) != null) {
+      finish(batch.request(), new ErrorPayload("IN_PROGRESS", "Request is already pending"));
+      return;
+    }
+    var sent =
+        dispatch(
+            prepareMessage(
+                operation.requestId(),
+                batch.request().correlationId(),
+                ClientParticipants.GATEWAY,
+                operation.operationCode(),
+                operation.payload()));
+    if (!sent.accepted() && pending.remove(operation.requestId(), batch)) {
+      finish(batch.request(), new ErrorPayload(sent.errorCode().name(), sent.description()));
+    }
+  }
+
+  private void completeOperation(Message message) {
+    Batch batch = pending.remove(message.requestId());
+    if (batch == null) {
+      return;
+    }
+    if (!message.correlationId().equals(batch.request().correlationId())
+        || !(message.payload() instanceof OperationReplyPayload reply)) {
+      finish(batch.request(), new ErrorPayload("INVALID_REPLY", "Unexpected operation result"));
+      return;
+    }
+    batch.results().add(reply);
+    if (batch.operations().hasNext() && reply.status() == ResultStatus.SUCCESS) {
+      submit(batch);
+    } else {
+      finish(
+          batch.request(),
+          batch.results().size() == 1
+              ? reply
+              : new OperationReplyPayload(
+                  reply.status(), new OperationResultsPayload(batch.results())));
+    }
+  }
+
+  private void finish(Message message, MessagePayload result) {
+    int target =
+        message.senderId() == ClientParticipants.EVENTS
+            ? ClientParticipants.UI
+            : message.senderId();
+    dispatch(
+        prepareMessage(
+            message.requestId(), message.correlationId(), target, message.operationCode(), result));
+  }
+
+  private static UUID targetId(MessagePayload payload) {
+    if (payload instanceof TargetPayload target) {
+      return target.targetId();
+    }
+    if (payload instanceof OrderCommandPayload order) {
+      return order.orderId();
+    }
+    if (payload instanceof PlaceOrderPayload order) {
+      return order.shopId();
+    }
+    if (payload instanceof ResolveCasePayload resolution) {
+      return resolution.caseId();
+    }
+    return new UUID(0, 0);
+  }
+
+  private record Batch(
+      Message request,
+      Iterator<OperationRequest> operations,
+      List<OperationReplyPayload> results) {}
 }
