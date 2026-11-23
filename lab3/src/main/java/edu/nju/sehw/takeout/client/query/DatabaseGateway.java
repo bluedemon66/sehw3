@@ -2,9 +2,11 @@ package edu.nju.sehw.takeout.client.query;
 
 import edu.nju.sehw.takeout.client.core.Core;
 import edu.nju.sehw.takeout.client.core.MessageParticipant;
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
 import edu.nju.sehw.takeout.model.message.Message;
+import edu.nju.sehw.takeout.model.message.OperationReplyPayload;
 import edu.nju.sehw.takeout.model.network.SecureResponse;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -24,7 +26,7 @@ public final class DatabaseGateway extends MessageParticipant {
   private final HttpsTransport transport;
 
   /** Remote request identifiers mapped to the original participant and root UI return route. */
-  private final Map<UUID, ReplyRoute> pending = new ConcurrentHashMap<>();
+  private final Map<UUID, Message> pending = new ConcurrentHashMap<>();
 
   /**
    * Creates this participant with the dependencies documented below.
@@ -48,30 +50,50 @@ public final class DatabaseGateway extends MessageParticipant {
    *
    * @param message message envelope containing request identity, routing fields, operation code,
    *     and arguments
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public void parse(Message message) {
-    throw new NotImplementedYetException("DatabaseGateway.parse");
+    if (pending.putIfAbsent(message.requestId(), message) == null) {
+      executeOperation(message.requestId());
+    }
   }
 
   /**
    * Submits the selected CRUD or scalar-query operation through the configured transport.
    *
-   * @param operationCode numeric identifier selecting the operation to execute
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
+   * @param requestId identifier of the pending request
    */
-  private void executeOperation(int operationCode) {
-    throw new NotImplementedYetException("DatabaseGateway.executeOperation");
+  private void executeOperation(UUID requestId) {
+    Message message = pending.get(requestId);
+    try {
+      transport
+          .submit(security.prepare(message))
+          .whenComplete((response, failure) -> onReply(requestId, response, failure));
+    } catch (RuntimeException ex) {
+      onReply(requestId, null, ex);
+    }
   }
 
   /**
    * Uses the response request ID to recover the client return route and forward the result.
    *
-   * @param reply remote request identifier, result status, and typed result payload
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
+   * @param requestId identifier of the pending request
+   * @param response remote response when transport succeeds
+   * @param failure cause of a transport failure, when present
    */
-  private void onReply(SecureResponse reply) {
-    throw new NotImplementedYetException("DatabaseGateway.onReply");
+  private void onReply(UUID requestId, SecureResponse response, Throwable failure) {
+    Message request = pending.remove(requestId);
+    if (request == null) {
+      return;
+    }
+    if (failure != null || response == null || !requestId.equals(response.requestId())) {
+      reply(
+          request,
+          new OperationReplyPayload(
+              ResultStatus.FAILED,
+              new ErrorPayload("TRANSPORT", "Could not complete the server request")));
+      return;
+    }
+    reply(request, new OperationReplyPayload(response.status(), response.payload()));
   }
 }
