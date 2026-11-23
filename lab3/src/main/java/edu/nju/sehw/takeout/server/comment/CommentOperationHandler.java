@@ -1,19 +1,30 @@
 package edu.nju.sehw.takeout.server.comment;
 
+import edu.nju.sehw.takeout.model.comment.CommentOperation;
 import edu.nju.sehw.takeout.model.comment.CommentPage;
+import edu.nju.sehw.takeout.model.comment.CommentPagePayload;
 import edu.nju.sehw.takeout.model.comment.CommentResult;
 import edu.nju.sehw.takeout.model.comment.CommentStatus;
+import edu.nju.sehw.takeout.model.comment.CommentStatusPayload;
 import edu.nju.sehw.takeout.model.comment.CommentView;
+import edu.nju.sehw.takeout.model.comment.CommentViewPayload;
 import edu.nju.sehw.takeout.model.comment.HideCommentPayload;
 import edu.nju.sehw.takeout.model.comment.ListCommentPayload;
 import edu.nju.sehw.takeout.model.comment.PublishCommentPayload;
+import edu.nju.sehw.takeout.model.comment.PurchaseMark;
 import edu.nju.sehw.takeout.model.comment.ReplyCommentPayload;
 import edu.nju.sehw.takeout.model.comment.ReplyView;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.comment.ReplyViewPayload;
+import edu.nju.sehw.takeout.model.comment.SubjectKind;
+import edu.nju.sehw.takeout.model.comment.WithdrawCommentPayload;
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.message.MessagePayload;
+import edu.nju.sehw.takeout.server.operation.OperationFailure;
 import edu.nju.sehw.takeout.server.persistence.TransactionContext;
 import edu.nju.sehw.takeout.server.resource.ServerResourceStore;
 import edu.nju.sehw.takeout.server.security.ServerRequestContext;
 import edu.nju.sehw.takeout.server.task.VerifiedTask;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -61,10 +72,33 @@ public final class CommentOperationHandler {
    * @param transaction active transaction context owned by the enclosing TransactionRunner
    * @param task authenticated request, reply channel, and optional staged upload to execute
    * @return the comment operation result correlated to the remote request
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   public CommentResult handle(TransactionContext transaction, VerifiedTask task) {
-    throw new NotImplementedYetException("CommentOperationHandler.handle");
+    var operation =
+        Arrays.stream(CommentOperation.values())
+            .filter(value -> value.code() == task.message().operationCode())
+            .findFirst()
+            .orElseThrow();
+    var arguments = task.message().payload();
+    var context = task.context();
+    MessagePayload payload =
+        switch (operation) {
+          case LIST ->
+              new CommentPagePayload(list(transaction, (ListCommentPayload) arguments, context));
+          case PUBLISH ->
+              new CommentViewPayload(
+                  publish(transaction, (PublishCommentPayload) arguments, context));
+          case WITHDRAW ->
+              new CommentStatusPayload(
+                  withdraw(transaction, ((WithdrawCommentPayload) arguments).commentId(), context));
+          case REPLY ->
+              new ReplyViewPayload(reply(transaction, (ReplyCommentPayload) arguments, context));
+          case HIDE ->
+              new CommentStatusPayload(hide(transaction, (HideCommentPayload) arguments, context));
+          case UPLOAD_ATTACHMENT ->
+              throw new IllegalArgumentException("Upload requires the upload handler");
+        };
+    return new CommentResult(context.requestId(), operation, ResultStatus.SUCCESS, payload);
   }
 
   /**
@@ -76,11 +110,13 @@ public final class CommentOperationHandler {
    * @param context authenticated principal, server-established permissions, and remote request
    *     identity
    * @return the visible comment page and continuation cursor
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private CommentPage list(
       TransactionContext transaction, ListCommentPayload payload, ServerRequestContext context) {
-    throw new NotImplementedYetException("CommentOperationHandler.list");
+    if (payload.limit() < 1 || payload.limit() > 100) {
+      throw new IllegalArgumentException("Comment page size must be between 1 and 100");
+    }
+    return repository.listPage(transaction, new CommentQuery(context, payload));
   }
 
   /**
@@ -92,11 +128,22 @@ public final class CommentOperationHandler {
    * @param context authenticated principal, server-established permissions, and remote request
    *     identity
    * @return the new comment display projection
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private CommentView publish(
       TransactionContext transaction, PublishCommentPayload payload, ServerRequestContext context) {
-    throw new NotImplementedYetException("CommentOperationHandler.publish");
+    final int length = validateText(payload.text(), 2000);
+    if (payload.attachmentIds().size() > 9
+        || payload.attachmentIds().stream().distinct().count() != payload.attachmentIds().size()) {
+      throw new IllegalArgumentException("A comment can include up to nine distinct attachments");
+    }
+    resources.checkOwned(transaction, context.principalId(), payload.attachmentIds());
+    var mark = purchaseEvidence.resolve(transaction, context.principalId(), payload.subject());
+    if (payload.subject().kind() == SubjectKind.RIDER_SERVICE
+        && (payload.subject().orderId().isEmpty() || mark != PurchaseMark.PURCHASED)) {
+      throw new OperationFailure(ResultStatus.FORBIDDEN, "A completed delivery is required");
+    }
+    return repository.publish(
+        transaction, new PublishCommentCommand(context, payload, mark, length));
   }
 
   /**
@@ -107,11 +154,11 @@ public final class CommentOperationHandler {
    * @param context authenticated principal, server-established permissions, and remote request
    *     identity
    * @return the resulting comment publication state
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private CommentStatus withdraw(
       TransactionContext transaction, UUID commentId, ServerRequestContext context) {
-    throw new NotImplementedYetException("CommentOperationHandler.withdraw");
+    return repository.withdraw(
+        transaction, new WithdrawCommentCommand(context, new WithdrawCommentPayload(commentId)));
   }
 
   /**
@@ -123,11 +170,11 @@ public final class CommentOperationHandler {
    * @param context authenticated principal, server-established permissions, and remote request
    *     identity
    * @return the persisted reply display projection
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private ReplyView reply(
       TransactionContext transaction, ReplyCommentPayload payload, ServerRequestContext context) {
-    throw new NotImplementedYetException("CommentOperationHandler.reply");
+    validateText(payload.text(), 2000);
+    return repository.reply(transaction, new ReplyCommentCommand(context, payload));
   }
 
   /**
@@ -139,10 +186,18 @@ public final class CommentOperationHandler {
    * @param context authenticated principal, server-established permissions, and remote request
    *     identity
    * @return the resulting comment publication state
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private CommentStatus hide(
       TransactionContext transaction, HideCommentPayload payload, ServerRequestContext context) {
-    throw new NotImplementedYetException("CommentOperationHandler.hide");
+    validateText(payload.reason(), 1000);
+    return repository.hide(transaction, new HideCommentCommand(context, payload));
+  }
+
+  private int validateText(String text, int maximum) {
+    int length = textLengthPolicy.measure(text);
+    if (text.isBlank() || length < 1 || length > maximum) {
+      throw new IllegalArgumentException("Invalid comment text length");
+    }
+    return length;
   }
 }
