@@ -14,6 +14,11 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>2.5.252</version>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>5.13.4</version>
@@ -32,6 +37,11 @@
         <groupId>com.spotify.fmt</groupId>
         <artifactId>fmt-maven-plugin</artifactId>
         <version>2.29</version>
+        <configuration>
+          <additionalSourceDirectories>
+            <additionalSourceDirectory>${project.basedir}/doc/examples/file-layer</additionalSourceDirectory>
+          </additionalSourceDirectories>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>com.google.googlejavaformat</groupId>
@@ -66,17 +76,69 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>3.6.0</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>12.3.1</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <configLocation>config/checkstyle.xml</configLocation>
+          <configLocation>google_checks.xml</configLocation>
+          <sourceDirectories>
+            <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+            <sourceDirectory>${project.basedir}/doc/examples/file-layer</sourceDirectory>
+          </sourceDirectories>
+          <includeResources>false</includeResources>
+          <includeTestResources>false</includeTestResources>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <consoleOutput>true</consoleOutput>
           <failOnViolation>true</failOnViolation>
+          <violationSeverity>warning</violationSeverity>
         </configuration>
         <executions>
           <execution>
             <id>code-style</id>
             <phase>verify</phase>
             <goals><goal>check</goal></goals>
+          </execution>
+          <execution>
+            <id>project-style</id>
+            <phase>verify</phase>
+            <goals><goal>check</goal></goals>
+            <configuration>
+              <configLocation>config/checkstyle.xml</configLocation>
+              <cacheFile>${project.build.directory}/checkstyle-project-cachefile</cacheFile>
+              <outputFile>${project.build.directory}/checkstyle-project-result.xml</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <filters>
+                <filter>
+                  <artifact>com.h2database:h2</artifact>
+                  <excludes><exclude>META-INF/MANIFEST.MF</exclude></excludes>
+                </filter>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -85,6 +147,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.4.2</version>
         <configuration>
+          <forceCreation>true</forceCreation>
           <archive><manifest><mainClass>edu.nju.sehw.takeout.app.FrameworkDemo</mainClass></manifest></archive>
         </configuration>
       </plugin>
