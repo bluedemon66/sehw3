@@ -1,8 +1,9 @@
 package edu.nju.sehw.takeout.server.resource;
 
 import edu.nju.sehw.takeout.model.resource.RemoteResourceRef;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.resource.ResourceBlob;
 import edu.nju.sehw.takeout.server.persistence.TransactionContext;
+import edu.nju.sehw.takeout.server.security.ServerRequestContext;
 import edu.nju.sehw.takeout.server.task.VerifiedTask;
 import java.util.Objects;
 
@@ -27,9 +28,18 @@ public final class ServerUploadHandler {
    * @param transaction active transaction context owned by the enclosing TransactionRunner
    * @param task authenticated request, reply channel, and optional staged upload to execute
    * @return the server reference assigned to the stored resource
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   public RemoteResourceRef handle(TransactionContext transaction, VerifiedTask task) {
-    throw new NotImplementedYetException("ServerUploadHandler.handle");
+    return resources.write(
+        transaction,
+        task.upload()
+            .orElseThrow(
+                () -> new IllegalArgumentException("Verified upload content is required")));
+  }
+
+  /** Reads a resource for the authenticated caller. */
+  public ResourceBlob read(
+      TransactionContext transaction, String id, ServerRequestContext context) {
+    return resources.read(transaction, id, context);
   }
 }
