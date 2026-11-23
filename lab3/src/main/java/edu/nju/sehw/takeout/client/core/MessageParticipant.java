@@ -27,6 +27,31 @@ public abstract class MessageParticipant implements CoreEndpoint {
   private Message message;
 
   /**
+   * Dispatches a prepared message through the Core.
+   *
+   * @param snapshot outgoing message
+   * @return Core dispatch result
+   */
+  protected final DispatchResult dispatch(Message snapshot) {
+    return send(participantId, snapshot.targetId(), core, snapshot);
+  }
+
+  /** Sends a response preserving the request and correlation identifiers. */
+  protected final void reply(Message request, MessagePayload payload) {
+    var result =
+        dispatch(
+            prepareMessage(
+                request.requestId(),
+                request.correlationId(),
+                request.senderId(),
+                request.operationCode(),
+                payload));
+    if (!result.accepted()) {
+      throw new IllegalStateException(result.description());
+    }
+  }
+
+  /**
    * Creates this participant with the dependencies documented below.
    *
    * @param participantId positive identifier assigned to this participant in its local Core
