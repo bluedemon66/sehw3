@@ -14,4 +14,13 @@ public interface TransactionContext {
    * @return the connection owned by the enclosing TransactionRunner
    */
   Connection connection();
+
+  /**
+   * Registers cleanup of an external write if the database transaction rolls back.
+   *
+   * @param cleanup cleanup action
+   */
+  default void onRollback(Runnable cleanup) {
+    throw new UnsupportedOperationException("Transaction does not support rollback callbacks");
+  }
 }
