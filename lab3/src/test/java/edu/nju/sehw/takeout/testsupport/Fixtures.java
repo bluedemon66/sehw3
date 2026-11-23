@@ -20,11 +20,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class Fixtures {
   private Fixtures() {}
 
+  /** Creates an open-page message for the specified route. */
   public static Message message(UUID requestId, int sender, int target) {
     return new Message(
         requestId, sender, target, OperationCode.OPEN_PAGE.code(), new EmptyPayload());
   }
 
+  /** Creates a task with a matching request and verified context. */
   public static VerifiedTask task(UUID requestId) {
     ServerRequestContext context =
         new ServerRequestContext(
@@ -36,10 +38,12 @@ public final class Fixtures {
   public static class Probe extends MessageParticipant {
     private final List<Message> received = new CopyOnWriteArrayList<>();
 
+    /** Creates a probe with the given participant identifier and Core. */
     public Probe(int id, Core core) {
       super(id, core);
     }
 
+    /** Creates a message snapshot using this probe as the sender. */
     public Message snapshot(UUID requestId, int targetId, MessagePayload payload) {
       return prepareMessage(requestId, targetId, OperationCode.OPEN_PAGE.code(), payload);
     }
@@ -49,6 +53,7 @@ public final class Fixtures {
       received.add(message);
     }
 
+    /** Returns a snapshot of the messages received by this probe. */
     public List<Message> received() {
       return List.copyOf(received);
     }
