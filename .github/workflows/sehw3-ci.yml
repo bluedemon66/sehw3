@@ -58,6 +58,7 @@ jobs:
           path: |
             lab3/target/surefire-reports/
             lab3/target/checkstyle-result.xml
+            lab3/target/checkstyle-project-result.xml
           if-no-files-found: warn
           retention-days: 14
 
