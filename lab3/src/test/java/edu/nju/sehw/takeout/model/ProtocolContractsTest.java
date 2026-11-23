@@ -160,7 +160,7 @@ class ProtocolContractsTest {
   }
 
   @Test
-  void schemaRequiresATypeDefinitionForEachRequiredField() {
+  void schemaRequiresTypeDefinitionForEachRequiredField() {
     assertThrows(
         IllegalArgumentException.class, () -> new ParameterSchema(Map.of(), Set.of("orderId")));
   }
