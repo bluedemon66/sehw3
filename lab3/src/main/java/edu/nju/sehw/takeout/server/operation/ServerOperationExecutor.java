@@ -1,16 +1,25 @@
 package edu.nju.sehw.takeout.server.operation;
 
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.common.TargetDescriptor;
+import edu.nju.sehw.takeout.model.message.BinaryMessageCodec;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
+import edu.nju.sehw.takeout.model.message.OperationCode;
+import edu.nju.sehw.takeout.model.network.MessageDigests;
 import edu.nju.sehw.takeout.model.network.SecureResponse;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.resource.ResourcePayload;
+import edu.nju.sehw.takeout.model.resource.ResourceRefPayload;
 import edu.nju.sehw.takeout.server.comment.CommentOperationHandler;
 import edu.nju.sehw.takeout.server.order.OrderOperationHandler;
 import edu.nju.sehw.takeout.server.persistence.DatabaseAdapter;
 import edu.nju.sehw.takeout.server.persistence.IdempotencyStore;
+import edu.nju.sehw.takeout.server.persistence.TransactionContext;
 import edu.nju.sehw.takeout.server.persistence.TransactionRunner;
 import edu.nju.sehw.takeout.server.resource.ServerUploadHandler;
 import edu.nju.sehw.takeout.server.security.ServerPermissionChecker;
 import edu.nju.sehw.takeout.server.task.VerifiedTask;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Coordinates authorization, idempotency, transactions, and the selected server operation handler.
@@ -39,6 +48,8 @@ public final class ServerOperationExecutor implements OperationExecutor {
 
   /** Server handler that registers verified resource uploads. */
   private final ServerUploadHandler uploads;
+
+  private final BinaryMessageCodec codec = new BinaryMessageCodec();
 
   /**
    * Creates this component with the dependencies documented below.
@@ -80,10 +91,99 @@ public final class ServerOperationExecutor implements OperationExecutor {
    *
    * @param task authenticated request, reply channel, and optional staged upload to execute
    * @return the response associated with the task's remote request identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public SecureResponse execute(VerifiedTask task) {
-    throw new NotImplementedYetException("ServerOperationExecutor.execute");
+    UUID id = task.context().requestId();
+    try {
+      var message = task.message();
+      var operation =
+          catalog
+              .find(message.operationCode())
+              .orElseThrow(
+                  () -> new OperationFailure(ResultStatus.INVALID_REQUEST, "Unknown operation"));
+      var target = StandardOperations.validate(operation, message.payload());
+      var access = checker.check(task.context(), operation, target);
+      if (!access.allowed()) {
+        return failure(id, ResultStatus.FORBIDDEN, access.description());
+      }
+      return transactions.inTransaction(
+          transaction -> {
+            if (operation.transactionPolicy() == TransactionPolicy.READ_ONLY) {
+              return executeWithin(transaction, operation, target, task);
+            }
+            var actor = task.context().principalId();
+            var claim =
+                idempotency.claim(
+                    transaction, actor, id, MessageDigests.sha256(codec.encode(message)));
+            return switch (claim.status()) {
+              case CLAIMED -> {
+                var response = executeWithin(transaction, operation, target, task);
+                idempotency.complete(transaction, actor, id, response);
+                yield response;
+              }
+              case REPLAY -> claim.result().orElseThrow();
+              case IN_PROGRESS ->
+                  failure(id, ResultStatus.IN_PROGRESS, "Request is still processing");
+              case DIGEST_MISMATCH ->
+                  failure(id, ResultStatus.CONFLICT, "Request ID already used for different data");
+            };
+          });
+    } catch (OperationFailure ex) {
+      return failure(id, ex.status(), ex.getMessage());
+    } catch (IllegalArgumentException ex) {
+      return failure(
+          id,
+          ResultStatus.INVALID_REQUEST,
+          ex.getMessage() == null ? "Invalid input" : ex.getMessage());
+    }
+  }
+
+  private SecureResponse executeWithin(
+      TransactionContext transaction,
+      PreparedOperation definition,
+      TargetDescriptor target,
+      VerifiedTask task) {
+    UUID id = task.context().requestId();
+    return switch (OperationCode.fromCode(definition.operationCode())) {
+      case COMMENT_LIST, COMMENT_PUBLISH, COMMENT_WITHDRAW, COMMENT_REPLY, COMMENT_HIDE -> {
+        var result = comments.handle(transaction, task);
+        yield new SecureResponse(id, result.status(), result.payload());
+      }
+      case PLACE_ORDER,
+          CANCEL_ORDER,
+          CONFIRM_RECEIPT,
+          REPORT_NOT_RECEIVED,
+          START_PREPARATION,
+          RIDER_PICKUP,
+          CONFIRM_DELIVERY,
+          ACCEPT_ORDER,
+          REJECT_ORDER,
+          FINISH_PREPARATION,
+          ORDER_DETAIL,
+          RESOLVE_CASE -> {
+        var result = orders.handle(transaction, task);
+        yield new SecureResponse(id, result.status(), result.payload());
+      }
+      case UPLOAD_ATTACHMENT ->
+          new SecureResponse(
+              id, ResultStatus.SUCCESS, new ResourceRefPayload(uploads.handle(transaction, task)));
+      case GET_RESOURCE ->
+          new SecureResponse(
+              id,
+              ResultStatus.SUCCESS,
+              new ResourcePayload(
+                  uploads.read(transaction, target.targetId().toString(), task.context())));
+      default -> {
+        var result =
+            database.executeWithinTransaction(
+                transaction, definition, task.context(), task.message());
+        yield new SecureResponse(id, result.status(), result.payload());
+      }
+    };
+  }
+
+  private static SecureResponse failure(UUID id, ResultStatus status, String description) {
+    return new SecureResponse(id, status, new ErrorPayload(status.name(), description));
   }
 }
