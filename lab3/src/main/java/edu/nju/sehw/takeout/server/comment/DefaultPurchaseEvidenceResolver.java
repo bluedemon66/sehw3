@@ -3,8 +3,8 @@ package edu.nju.sehw.takeout.server.comment;
 import edu.nju.sehw.takeout.model.comment.CommentSubject;
 import edu.nju.sehw.takeout.model.comment.PurchaseMark;
 import edu.nju.sehw.takeout.model.common.UserId;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
 import edu.nju.sehw.takeout.server.persistence.DatabaseAdapter;
+import edu.nju.sehw.takeout.server.persistence.Jdbc;
 import edu.nju.sehw.takeout.server.persistence.TransactionContext;
 import java.util.Objects;
 
@@ -31,11 +31,36 @@ public final class DefaultPurchaseEvidenceResolver implements PurchaseEvidenceRe
    *     being inspected
    * @param subject kind and identifiers of the shop, dish, or delivery service being reviewed
    * @return the purchase label calculated from server-side evidence
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public PurchaseMark resolve(
       TransactionContext transaction, UserId actor, CommentSubject subject) {
-    throw new NotImplementedYetException("DefaultPurchaseEvidenceResolver.resolve");
+    String target =
+        switch (subject.kind()) {
+          case SHOP -> "o.shop_id=?";
+          case DISH ->
+              "EXISTS (SELECT 1 FROM order_items i WHERE i.order_id=o.order_id AND i.dish_id=?)";
+          case RIDER_SERVICE -> "o.rider_id=?";
+        };
+    boolean purchased =
+        Jdbc.first(
+                transaction,
+                """
+                SELECT 1 FROM orders o WHERE o.customer_id=? AND o.status='COMPLETED'
+                AND (CAST(? AS UUID) IS NULL OR o.order_id=?)
+                AND (CAST(? AS UUID) IS NULL OR o.shop_id=?)
+                """
+                    + " AND "
+                    + target
+                    + " LIMIT 1",
+                row -> row.getInt(1),
+                actor.value(),
+                subject.orderId().orElse(null),
+                subject.orderId().orElse(null),
+                subject.shopId().orElse(null),
+                subject.shopId().orElse(null),
+                subject.targetId())
+            .isPresent();
+    return purchased ? PurchaseMark.PURCHASED : PurchaseMark.NOT_PURCHASED;
   }
 }
