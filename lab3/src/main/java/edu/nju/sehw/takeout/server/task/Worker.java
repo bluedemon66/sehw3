@@ -1,15 +1,19 @@
 package edu.nju.sehw.takeout.server.task;
 
-import edu.nju.sehw.takeout.model.message.Message;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
+import edu.nju.sehw.takeout.model.network.SecureResponse;
 import edu.nju.sehw.takeout.server.network.ResponseSender;
 import edu.nju.sehw.takeout.server.operation.OperationExecutor;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
  * Consumes verified tasks, invokes the configured operation executor, and sends their responses.
  */
 public final class Worker implements Runnable {
+  private static final System.Logger LOGGER = System.getLogger(Worker.class.getName());
+
   /** Bounded queue shared by the receiver and server workers. */
   private final TaskPool pool;
 
@@ -33,14 +37,36 @@ public final class Worker implements Runnable {
     this.responseSender = Objects.requireNonNull(responseSender, "responseSender");
   }
 
-  /**
-   * Consumes tasks, invokes the operation executor, and sends each resulting response.
-   *
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
+  /** Consumes tasks, invokes the operation executor, and sends each resulting response. */
   @Override
   public void run() {
-    throw new NotImplementedYetException("Worker.run");
+    while (!Thread.currentThread().isInterrupted()) {
+      VerifiedTask task;
+      try {
+        task = pool.take();
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+        return;
+      }
+      try {
+        SecureResponse response;
+        try {
+          response = parseTask(task);
+        } catch (RuntimeException ex) {
+          LOGGER.log(System.Logger.Level.ERROR, "Operation execution failed", ex);
+          response =
+              new SecureResponse(
+                  task.context().requestId(),
+                  ResultStatus.FAILED,
+                  new ErrorPayload("FAILED", "Server operation failed"));
+        }
+        responseSender.reply(task.replyChannel(), response);
+      } catch (IOException | RuntimeException ex) {
+        LOGGER.log(System.Logger.Level.WARNING, "Could not deliver operation response", ex);
+      } finally {
+        task.upload().ifPresent(VerifiedUpload::discard);
+      }
+    }
   }
 
   /**
@@ -48,9 +74,8 @@ public final class Worker implements Runnable {
    *
    * @param task authenticated request, reply channel, and optional staged upload to execute
    * @return the authenticated task's message envelope
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
-  private Message parseTask(VerifiedTask task) {
-    throw new NotImplementedYetException("Worker.parseTask");
+  private SecureResponse parseTask(VerifiedTask task) {
+    return executor.execute(task);
   }
 }
