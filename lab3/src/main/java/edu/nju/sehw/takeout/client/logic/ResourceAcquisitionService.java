@@ -1,72 +1,135 @@
 package edu.nju.sehw.takeout.client.logic;
 
+import edu.nju.sehw.takeout.client.core.ClientParticipants;
 import edu.nju.sehw.takeout.client.core.Core;
 import edu.nju.sehw.takeout.client.core.MessageParticipant;
 import edu.nju.sehw.takeout.client.resource.LocalResourceStore;
 import edu.nju.sehw.takeout.client.security.ClientPermissionChecker;
+import edu.nju.sehw.takeout.model.common.TargetDescriptor;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
 import edu.nju.sehw.takeout.model.message.Message;
+import edu.nju.sehw.takeout.model.message.OperationCode;
 import edu.nju.sehw.takeout.model.resource.LocalResourceRef;
 import edu.nju.sehw.takeout.model.resource.ResourceBundle;
+import edu.nju.sehw.takeout.model.resource.ResourceBundlePayload;
 import edu.nju.sehw.takeout.model.resource.ResourceDescriptor;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.resource.ResourceRequestPayload;
+import edu.nju.sehw.takeout.model.ui.PageManifestPayload;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-/** Collects local resource references and coordinates retrieval of missing page resources. */
+/** Resolves page resources locally and downloads missing remote assets. */
 public final class ResourceAcquisitionService extends MessageParticipant {
-  /** Permission preflight or server authorization service used by this component. */
   private final ClientPermissionChecker checker;
-
-  /** Client resource store used to resolve references and cache downloaded bytes. */
   private final LocalResourceStore store;
+  private final Map<UUID, Download> waiting = new ConcurrentHashMap<>();
 
-  /**
-   * Creates this participant with the dependencies documented below.
-   *
-   * @param participantId positive identifier assigned to this participant in its local Core
-   * @param core local Core that owns this participant and routes its messages
-   * @param checker permission preflight or server authorization service used by this component
-   * @param store client resource store used to resolve references and cache downloaded bytes
-   * @throws NullPointerException if a required component, dependency, or collection element is null
-   */
+  /** Creates the service for the given local store and permission checker. */
   public ResourceAcquisitionService(
-      int participantId, Core core, ClientPermissionChecker checker, LocalResourceStore store) {
-    super(participantId, core);
-    this.checker = Objects.requireNonNull(checker, "checker");
-    this.store = Objects.requireNonNull(store, "store");
+      int id, Core core, ClientPermissionChecker checker, LocalResourceStore store) {
+    super(id, core);
+    this.checker = Objects.requireNonNull(checker);
+    this.store = Objects.requireNonNull(store);
   }
 
-  /**
-   * Processes page resource requirements and coordinates local lookup or remote retrieval.
-   *
-   * @param message message envelope containing request identity, routing fields, operation code,
-   *     and arguments
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
   @Override
   public void parse(Message message) {
-    throw new NotImplementedYetException("ResourceAcquisitionService.parse");
+    var payload = message.payload();
+    if (message.senderId() == ClientParticipants.DOWNLOAD) {
+      finishDownload(message);
+      return;
+    }
+    Iterator<ResourceDescriptor> entries;
+    if (payload instanceof PageManifestPayload manifest) {
+      entries = manifest.manifest().entries().iterator();
+    } else if (payload instanceof ResourceRequestPayload resource) {
+      entries = java.util.List.of(resource.descriptor()).iterator();
+    } else {
+      reply(message, new ErrorPayload("INVALID_REQUEST", "Expected resource descriptors"));
+      return;
+    }
+    collect(new Acquisition(message, entries, new HashMap<>()));
   }
 
-  /**
-   * Obtains a local resource reference for a described page resource.
-   *
-   * @param descriptor resource identity, kind, and available local or remote location hints
-   * @return the local reference to the available or retrieved resource
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private LocalResourceRef acquire(ResourceDescriptor descriptor) {
-    throw new NotImplementedYetException("ResourceAcquisitionService.acquire");
+  private void collect(Acquisition acquisition) {
+    var original = acquisition.message();
+    try {
+      while (acquisition.entries().hasNext()) {
+        var descriptor = acquisition.entries().next();
+        var local = store.find(descriptor);
+        if (local.isPresent()) {
+          acquisition.resources().put(descriptor.elementId(), local.orElseThrow());
+          continue;
+        }
+        String remote =
+            descriptor
+                .remoteResourceId()
+                .orElseThrow(
+                    () ->
+                        new IllegalArgumentException(
+                            "Resource missing for element " + descriptor.elementId()));
+        int code = OperationCode.GET_RESOURCE.code();
+        var check = checker.check(code, new TargetDescriptor("resource", UUID.fromString(remote)));
+        if (!check.allowed()) {
+          reply(original, new ErrorPayload(check.code(), check.description()));
+          return;
+        }
+        UUID child = UUID.randomUUID();
+        waiting.put(child, new Download(acquisition, descriptor.elementId()));
+        var result =
+            dispatch(
+                prepareMessage(
+                    child,
+                    original.correlationId(),
+                    ClientParticipants.DOWNLOAD,
+                    code,
+                    new ResourceRequestPayload(descriptor)));
+        if (!result.accepted() && waiting.remove(child) != null) {
+          reply(original, new ErrorPayload(result.errorCode().name(), result.description()));
+        }
+        return;
+      }
+      reply(
+          original,
+          new ResourceBundlePayload(
+              new ResourceBundle(original.requestId(), acquisition.resources())));
+    } catch (IllegalArgumentException | java.io.UncheckedIOException ex) {
+      reply(original, new ErrorPayload("RESOURCE_FAILED", ex.getMessage()));
+    }
   }
 
-  /**
-   * Collects the local element-to-resource bindings accumulated for a request.
-   *
-   * @param requestId identifier of this individual request; retries reuse the same identifier
-   * @return the resource bundle carrying the same request identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
-   */
-  private ResourceBundle collect(UUID requestId) {
-    throw new NotImplementedYetException("ResourceAcquisitionService.collect");
+  private void finishDownload(Message message) {
+    var download = waiting.remove(message.requestId());
+    if (download == null) {
+      return;
+    }
+    var acquisition = download.acquisition();
+    if (!acquisition.message().correlationId().equals(message.correlationId())) {
+      reply(
+          acquisition.message(),
+          new ErrorPayload("INVALID_REPLY", "Resource correlation mismatch"));
+    } else if (message.payload() instanceof ResourceBundlePayload bundle
+        && bundle.resources().localResources().containsKey(download.element())) {
+      acquisition
+          .resources()
+          .put(download.element(), bundle.resources().localResources().get(download.element()));
+      collect(acquisition);
+    } else if (message.payload() instanceof ErrorPayload error) {
+      reply(acquisition.message(), error);
+    } else {
+      reply(
+          acquisition.message(), new ErrorPayload("INVALID_REPLY", "Missing downloaded resource"));
+    }
   }
+
+  private record Acquisition(
+      Message message,
+      Iterator<ResourceDescriptor> entries,
+      Map<Integer, LocalResourceRef> resources) {}
+
+  private record Download(Acquisition acquisition, int element) {}
 }
