@@ -4,6 +4,7 @@ import edu.nju.sehw.takeout.model.resource.LocalResourceRef;
 import edu.nju.sehw.takeout.model.resource.ResourceBlob;
 import edu.nju.sehw.takeout.model.resource.ResourceDescriptor;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /** Defines presence checks, path resolution, and storage for client-side resources. */
 public interface LocalResourceStore {
@@ -14,6 +15,16 @@ public interface LocalResourceStore {
    * @return true when a usable local copy is available for the descriptor
    */
   boolean contains(ResourceDescriptor descriptor);
+
+  /**
+   * Finds the usable local reference for a descriptor.
+   *
+   * @param descriptor resource hints and kind
+   * @return the local reference when found
+   */
+  default Optional<LocalResourceRef> find(ResourceDescriptor descriptor) {
+    return contains(descriptor) ? descriptor.localRef() : Optional.empty();
+  }
 
   /**
    * Resolves a numeric local resource reference using this store's root mapping.
