@@ -23,6 +23,12 @@ public interface ServerResourceStore {
    */
   ResourceBlob read(String resourceId, ServerRequestContext context);
 
+  /** Reads a resource using the caller's database transaction. */
+  default ResourceBlob read(
+      TransactionContext transaction, String resourceId, ServerRequestContext context) {
+    return read(resourceId, context);
+  }
+
   /**
    * Persists the verified staged upload and assigns its server resource identity.
    *
@@ -30,6 +36,11 @@ public interface ServerResourceStore {
    * @return the stored resource identifier, media type, and complete byte length
    */
   RemoteResourceRef write(VerifiedUpload upload);
+
+  /** Stores and registers an upload using the caller's database transaction. */
+  default RemoteResourceRef write(TransactionContext transaction, VerifiedUpload upload) {
+    return write(upload);
+  }
 
   /**
    * Checks ownership of every selected resource using the current transaction and actor identity.
