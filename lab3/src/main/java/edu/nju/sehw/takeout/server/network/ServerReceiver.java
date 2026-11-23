@@ -1,19 +1,36 @@
 package edu.nju.sehw.takeout.server.network;
 
+import edu.nju.sehw.takeout.model.common.Permission;
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
+import edu.nju.sehw.takeout.model.message.OperationCode;
+import edu.nju.sehw.takeout.model.network.MessageDigests;
 import edu.nju.sehw.takeout.model.network.ReplyChannel;
 import edu.nju.sehw.takeout.model.network.SecureRequest;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.network.SecureResponse;
+import edu.nju.sehw.takeout.model.resource.AttachmentUploadPayload;
+import edu.nju.sehw.takeout.model.resource.ImageMedia;
+import edu.nju.sehw.takeout.server.security.ServerRequestContext;
 import edu.nju.sehw.takeout.server.security.ServerRequestVerifier;
 import edu.nju.sehw.takeout.server.task.TaskPool;
+import edu.nju.sehw.takeout.server.task.VerifiedTask;
 import edu.nju.sehw.takeout.server.task.VerifiedUpload;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.HexFormat;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Authenticates incoming requests, stages uploads, and submits verified work to the bounded task
  * pool.
  */
 public final class ServerReceiver {
+  private static final System.Logger LOGGER = System.getLogger(ServerReceiver.class.getName());
+
   /** Server request validator that establishes the authenticated task context. */
   private final ServerRequestVerifier verifier;
 
@@ -44,10 +61,18 @@ public final class ServerReceiver {
    * @param request outgoing or received request envelope containing credential, timestamp, digest,
    *     and message
    * @param channel reply connection associated with the request that produced this response
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   public void receive(SecureRequest request, ReplyChannel channel) {
-    throw new NotImplementedYetException("ServerReceiver.receive");
+    try {
+      if (request.message().operationCode() == OperationCode.UPLOAD_ATTACHMENT.code()) {
+        reject(channel, request, ResultStatus.INVALID_REQUEST, "Use the upload endpoint");
+        return;
+      }
+      var context = verifier.verify(request);
+      enqueue(request, new VerifiedTask(context, request.message(), channel, Optional.empty()));
+    } catch (SecurityException ex) {
+      reject(channel, request, ResultStatus.UNAUTHENTICATED, "Request authentication failed");
+    }
   }
 
   /**
@@ -57,10 +82,23 @@ public final class ServerReceiver {
    *     and message
    * @param content stream containing the upload bytes received from the client connection
    * @param channel reply connection associated with the request that produced this response
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   public void receiveUpload(SecureRequest request, InputStream content, ReplyChannel channel) {
-    throw new NotImplementedYetException("ServerReceiver.receiveUpload");
+    try {
+      var context = verifier.verify(request);
+      if (!context.verifiedPermissions().contains(Permission.UPLOAD_RESOURCE)) {
+        reject(channel, request, ResultStatus.FORBIDDEN, "Upload permission required");
+        return;
+      }
+      var upload = stageUpload(request, content, context);
+      enqueue(request, new VerifiedTask(context, request.message(), channel, Optional.of(upload)));
+    } catch (SecurityException ex) {
+      reject(channel, request, ResultStatus.UNAUTHENTICATED, "Request authentication failed");
+    } catch (IllegalArgumentException ex) {
+      reject(channel, request, ResultStatus.INVALID_REQUEST, ex.getMessage());
+    } catch (IOException ex) {
+      reject(channel, request, ResultStatus.FAILED, "Could not stage upload");
+    }
   }
 
   /**
@@ -69,10 +107,51 @@ public final class ServerReceiver {
    * @param request outgoing or received request envelope containing credential, timestamp, digest,
    *     and message
    * @param content stream containing the upload bytes received from the client connection
+   * @param context verified identity and permissions
    * @return the authenticated staging-file description to attach to the task
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
+   * @throws IOException if the request body or staging file cannot be read or written
    */
-  private VerifiedUpload stageUpload(SecureRequest request, InputStream content) {
-    throw new NotImplementedYetException("ServerReceiver.stageUpload");
+  private VerifiedUpload stageUpload(
+      SecureRequest request, InputStream content, ServerRequestContext context) throws IOException {
+    if (request.message().operationCode() != OperationCode.UPLOAD_ATTACHMENT.code()
+        || !(request.message().payload() instanceof AttachmentUploadPayload metadata)) {
+      throw new IllegalArgumentException("Upload metadata is required");
+    }
+    byte[] bytes = content.readNBytes(Math.toIntExact(metadata.contentLength()) + 1);
+    if (bytes.length != metadata.contentLength()
+        || !HexFormat.of().formatHex(MessageDigests.sha256(bytes)).equals(metadata.contentDigest())
+        || !ImageMedia.detect(bytes).equals(metadata.mediaType())) {
+      throw new IllegalArgumentException("Upload content differs from its declared metadata");
+    }
+    Path file = Files.createTempFile("sehw3-attachment-", ".upload");
+    try {
+      Files.write(file, bytes);
+      return new VerifiedUpload(context, file, metadata.mediaType(), bytes.length, Instant.now());
+    } catch (IOException | RuntimeException ex) {
+      try {
+        Files.deleteIfExists(file);
+      } catch (IOException cleanup) {
+        ex.addSuppressed(cleanup);
+      }
+      throw ex;
+    }
+  }
+
+  private void enqueue(SecureRequest request, VerifiedTask task) {
+    if (!pool.offer(task)) {
+      task.upload().ifPresent(VerifiedUpload::discard);
+      reject(task.replyChannel(), request, ResultStatus.BUSY, "Server queue is full");
+    }
+  }
+
+  private void reject(
+      ReplyChannel channel, SecureRequest request, ResultStatus status, String detail) {
+    try {
+      responseSender.reply(
+          channel,
+          new SecureResponse(request.requestId(), status, new ErrorPayload(status.name(), detail)));
+    } catch (IOException ex) {
+      LOGGER.log(System.Logger.Level.WARNING, "Could not send rejection", ex);
+    }
   }
 }
