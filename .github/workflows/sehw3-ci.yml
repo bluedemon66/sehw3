@@ -41,7 +41,9 @@ jobs:
           cache-dependency-path: lab3/pom.xml
 
       - name: Compile, test, and check style
-        run: sh ./mvnw --batch-mode --no-transfer-progress clean verify
+        run: |
+          mvn --version
+          mvn --batch-mode --no-transfer-progress clean verify
 
       - name: Run the Core communication demonstration
         run: java -jar target/takeout-system-0.1.0-SNAPSHOT.jar
