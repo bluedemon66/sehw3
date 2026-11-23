@@ -1,8 +1,9 @@
 package edu.nju.sehw.takeout.server.security;
 
 import edu.nju.sehw.takeout.model.message.MessageCodec;
+import edu.nju.sehw.takeout.model.network.MessageDigests;
 import edu.nju.sehw.takeout.model.network.SecureRequest;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import java.security.MessageDigest;
 import java.time.Clock;
 import java.util.Objects;
 
@@ -38,11 +39,17 @@ public final class DefaultServerRequestVerifier implements ServerRequestVerifier
    * @param request outgoing or received request envelope containing credential, timestamp, digest,
    *     and message
    * @return the server-authenticated principal, permissions, and request identifier
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public ServerRequestContext verify(SecureRequest request) {
-    throw new NotImplementedYetException("DefaultServerRequestVerifier.verify");
+    validateEnvelope(request);
+    var principal =
+        sessions
+            .find(request.accessToken())
+            .filter(session -> session.expiresAt().isAfter(clock.instant()))
+            .orElseThrow(() -> new SecurityException("Unknown or expired session"));
+    return new ServerRequestContext(
+        principal.userId(), principal.permissions(), request.requestId());
   }
 
   /**
@@ -50,9 +57,15 @@ public final class DefaultServerRequestVerifier implements ServerRequestVerifier
    *
    * @param request outgoing or received request envelope containing credential, timestamp, digest,
    *     and message
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private void validateEnvelope(SecureRequest request) {
-    throw new NotImplementedYetException("DefaultServerRequestVerifier.validateEnvelope");
+    var now = clock.instant();
+    if (!request.requestId().equals(request.message().requestId())
+        || request.sentAt().isBefore(now.minusSeconds(300))
+        || request.sentAt().isAfter(now.plusSeconds(30))
+        || !MessageDigest.isEqual(
+            request.bodyDigest(), MessageDigests.sha256(codec.encode(request.message())))) {
+      throw new SecurityException("Invalid request envelope");
+    }
   }
 }
