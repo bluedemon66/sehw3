@@ -1,6 +1,8 @@
 package edu.nju.sehw.takeout.server.task;
 
 import edu.nju.sehw.takeout.server.security.ServerRequestContext;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Objects;
@@ -21,6 +23,8 @@ public record VerifiedUpload(
     String mediaType,
     long contentLength,
     Instant receivedAt) {
+  private static final System.Logger LOGGER = System.getLogger(VerifiedUpload.class.getName());
+
   /**
    * Creates the VerifiedUpload value from the components documented below.
    *
@@ -40,6 +44,15 @@ public record VerifiedUpload(
     Objects.requireNonNull(receivedAt, "receivedAt");
     if (contentLength < 0) {
       throw new IllegalArgumentException("上传长度须为非负数");
+    }
+  }
+
+  /** Releases the staged upload after processing or queue rejection. */
+  public void discard() {
+    try {
+      Files.deleteIfExists(stagingFile);
+    } catch (IOException ex) {
+      LOGGER.log(System.Logger.Level.WARNING, "Could not remove staged upload", ex);
     }
   }
 }
