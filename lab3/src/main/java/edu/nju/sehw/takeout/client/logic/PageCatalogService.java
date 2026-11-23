@@ -4,10 +4,17 @@ import edu.nju.sehw.takeout.client.core.Core;
 import edu.nju.sehw.takeout.client.core.MessageParticipant;
 import edu.nju.sehw.takeout.client.resource.LocalUiLibrary;
 import edu.nju.sehw.takeout.client.security.ClientPermissionChecker;
+import edu.nju.sehw.takeout.model.common.TargetDescriptor;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
 import edu.nju.sehw.takeout.model.message.Message;
+import edu.nju.sehw.takeout.model.message.OperationCode;
+import edu.nju.sehw.takeout.model.ui.PageManifestPayload;
+import edu.nju.sehw.takeout.model.ui.PageRequestPayload;
 import edu.nju.sehw.takeout.model.ui.PageResourceManifest;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import java.io.UncheckedIOException;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.UUID;
 
 /** Looks up the local layout and resource manifest required by a requested page. */
 public final class PageCatalogService extends MessageParticipant {
@@ -38,11 +45,22 @@ public final class PageCatalogService extends MessageParticipant {
    *
    * @param message message envelope containing request identity, routing fields, operation code,
    *     and arguments
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public void parse(Message message) {
-    throw new NotImplementedYetException("PageCatalogService.parse");
+    if (!(message.payload() instanceof PageRequestPayload request)) {
+      reply(message, new ErrorPayload("INVALID_REQUEST", "Expected page ID"));
+      return;
+    }
+    try {
+      reply(message, new PageManifestPayload(lookupPage(request.pageId())));
+    } catch (SecurityException ex) {
+      reply(message, new ErrorPayload("FORBIDDEN", ex.getMessage()));
+    } catch (NoSuchElementException ex) {
+      reply(message, new ErrorPayload("NOT_FOUND", ex.getMessage()));
+    } catch (IllegalArgumentException | UncheckedIOException ex) {
+      reply(message, new ErrorPayload("PAGE_FAILED", ex.getMessage()));
+    }
   }
 
   /**
@@ -50,9 +68,23 @@ public final class PageCatalogService extends MessageParticipant {
    *
    * @param pageId identifier of the page in the client's local page catalogue
    * @return the page layout and required resource descriptors
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private PageResourceManifest lookupPage(int pageId) {
-    throw new NotImplementedYetException("PageCatalogService.lookupPage");
+    String kind =
+        switch (pageId) {
+          case 1003 -> "turnover";
+          case 1004 -> "comment";
+          case 1005 -> "rider";
+          default -> "page";
+        };
+    var access =
+        checker.check(
+            OperationCode.OPEN_PAGE.code(), new TargetDescriptor(kind, new UUID(0, pageId)));
+    if (!access.allowed()) {
+      throw new SecurityException(access.description());
+    }
+    return library
+        .findPage(pageId)
+        .orElseThrow(() -> new NoSuchElementException("Page not found: " + pageId));
   }
 }
