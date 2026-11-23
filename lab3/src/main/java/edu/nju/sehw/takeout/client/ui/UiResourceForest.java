@@ -3,7 +3,6 @@ package edu.nju.sehw.takeout.client.ui;
 import edu.nju.sehw.takeout.model.resource.LocalResourceRef;
 import edu.nju.sehw.takeout.model.ui.UiPage;
 import edu.nju.sehw.takeout.model.ui.UiResourceNode;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,10 +20,9 @@ public final class UiResourceForest {
    * Installs the assembled page root into the controller-owned page forest.
    *
    * @param page assembled page associated with the UI request being completed
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   public void install(UiPage page) {
-    throw new NotImplementedYetException("UiResourceForest.install");
+    roots.put(page.pageId(), page.root());
   }
 
   /**
@@ -33,10 +31,9 @@ public final class UiResourceForest {
    * @param pageId identifier of the page in the client's local page catalogue
    * @param elementId identifier of the UI element to read, populate, or bind
    * @param resource numeric local resource reference to bind to the UI element
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   public void bind(int pageId, int elementId, LocalResourceRef resource) {
-    throw new NotImplementedYetException("UiResourceForest.bind");
+    roots.computeIfPresent(pageId, (id, root) -> bindNode(root, elementId, resource));
   }
 
   /**
@@ -44,9 +41,19 @@ public final class UiResourceForest {
    *
    * @param pageId identifier of the page in the client's local page catalogue
    * @return the page root, or Optional.empty() when the page has not been installed
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   public Optional<UiResourceNode> findPage(int pageId) {
-    throw new NotImplementedYetException("UiResourceForest.findPage");
+    return Optional.ofNullable(roots.get(pageId));
+  }
+
+  private UiResourceNode bindNode(UiResourceNode node, int elementId, LocalResourceRef resource) {
+    if (node.elementId() == elementId) {
+      return new UiResourceNode(elementId, Optional.of(resource), node.value(), node.children());
+    }
+    var children =
+        node.children().stream().map(child -> bindNode(child, elementId, resource)).toList();
+    return children.equals(node.children())
+        ? node
+        : new UiResourceNode(node.elementId(), node.resource(), node.value(), children);
   }
 }
