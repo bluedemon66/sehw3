@@ -1,5 +1,7 @@
 package edu.nju.sehw.takeout.server.task;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -67,5 +69,12 @@ public final class TaskPool {
    */
   public int capacity() {
     return capacity;
+  }
+
+  /** Removes the remaining queued tasks after reception has stopped. */
+  public List<VerifiedTask> drain() {
+    var remaining = new ArrayList<VerifiedTask>();
+    queue.drainTo(remaining);
+    return remaining;
   }
 }
