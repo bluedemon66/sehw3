@@ -56,7 +56,7 @@ class CoreRoutingTest {
   }
 
   @Test
-  void anUnregisteredObjectCannotImpersonateARegisteredSender() {
+  void unregisteredObjectCannotImpersonateRegisteredSender() {
     allow();
     Probe impostor = new Probe(1, core);
     assertEquals(
@@ -91,7 +91,7 @@ class CoreRoutingTest {
   }
 
   @Test
-  void aDifferentCoreIsRejected() {
+  void rejectsDifferentCore() {
     assertEquals(
         DispatchError.WRONG_CORE,
         sender.send(1, 2, new Core(), Fixtures.message(UUID.randomUUID(), 1, 2)).errorCode());
