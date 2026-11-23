@@ -3,10 +3,17 @@ package edu.nju.sehw.takeout.client.query;
 import edu.nju.sehw.takeout.client.core.Core;
 import edu.nju.sehw.takeout.client.core.MessageParticipant;
 import edu.nju.sehw.takeout.client.resource.LocalResourceStore;
+import edu.nju.sehw.takeout.model.common.ResultStatus;
+import edu.nju.sehw.takeout.model.message.ErrorPayload;
 import edu.nju.sehw.takeout.model.message.Message;
+import edu.nju.sehw.takeout.model.message.MessagePayload;
+import edu.nju.sehw.takeout.model.network.SecureResponse;
 import edu.nju.sehw.takeout.model.resource.LocalResourceRef;
 import edu.nju.sehw.takeout.model.resource.ResourceBlob;
-import edu.nju.sehw.takeout.scaffold.NotImplementedYetException;
+import edu.nju.sehw.takeout.model.resource.ResourceBundle;
+import edu.nju.sehw.takeout.model.resource.ResourceBundlePayload;
+import edu.nju.sehw.takeout.model.resource.ResourcePayload;
+import edu.nju.sehw.takeout.model.resource.ResourceRequestPayload;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -24,7 +31,7 @@ public final class ResourceGetTool extends MessageParticipant {
   private final LocalResourceStore store;
 
   /** Remote request identifiers mapped to the original participant and root UI return route. */
-  private final Map<UUID, ReplyRoute> pending = new ConcurrentHashMap<>();
+  private final Map<UUID, Message> pending = new ConcurrentHashMap<>();
 
   /**
    * Creates this participant with the dependencies documented below.
@@ -54,21 +61,63 @@ public final class ResourceGetTool extends MessageParticipant {
    *
    * @param message message envelope containing request identity, routing fields, operation code,
    *     and arguments
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   @Override
   public void parse(Message message) {
-    throw new NotImplementedYetException("ResourceGetTool.parse");
+    if (!(message.payload() instanceof ResourceRequestPayload)) {
+      reply(message, new ErrorPayload("INVALID_REQUEST", "Expected a remote resource request"));
+      return;
+    }
+    if (pending.putIfAbsent(message.requestId(), message) == null) {
+      download(message.requestId());
+    }
   }
 
   /**
    * Requests the server bytes for the selected remote resource identifier.
    *
-   * @param resourceId opaque identifier assigned to a resource by the server
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
+   * @param requestId identifier of the pending download
    */
-  private void download(String resourceId) {
-    throw new NotImplementedYetException("ResourceGetTool.download");
+  private void download(UUID requestId) {
+    Message message = pending.get(requestId);
+    try {
+      transport
+          .submit(security.prepare(message))
+          .whenComplete((response, failure) -> finish(requestId, response, failure));
+    } catch (RuntimeException ex) {
+      finish(requestId, null, ex);
+    }
+  }
+
+  private void finish(UUID requestId, SecureResponse response, Throwable failure) {
+    Message message = pending.remove(requestId);
+    if (message == null) {
+      return;
+    }
+    MessagePayload result = new ErrorPayload("DOWNLOAD_FAILED", "Could not download resource");
+    try {
+      if (failure == null
+          && response != null
+          && response.requestId().equals(requestId)
+          && response.status() == ResultStatus.SUCCESS
+          && response.payload() instanceof ResourcePayload blob
+          && message.payload() instanceof ResourceRequestPayload request
+          && request
+              .descriptor()
+              .remoteResourceId()
+              .orElseThrow()
+              .equals(blob.resource().reference().resourceId())) {
+        var ref = onResource(blob.resource());
+        if (ref.kind() == request.descriptor().kind()) {
+          result =
+              new ResourceBundlePayload(
+                  new ResourceBundle(requestId, Map.of(request.descriptor().elementId(), ref)));
+        }
+      }
+    } catch (RuntimeException ex) {
+      result = new ErrorPayload("CACHE_FAILED", "Could not cache downloaded resource");
+    }
+    reply(message, result);
   }
 
   /**
@@ -76,9 +125,8 @@ public final class ResourceGetTool extends MessageParticipant {
    *
    * @param reply complete resource metadata and downloaded bytes to store locally
    * @return the local reference assigned by the client resource store
-   * @throws NotImplementedYetException P.S. This entry point is currently awaiting implementation.
    */
   private LocalResourceRef onResource(ResourceBlob reply) {
-    throw new NotImplementedYetException("ResourceGetTool.onResource");
+    return store.save(reply);
   }
 }
